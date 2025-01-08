@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   useSuspenseInfiniteQuery,
@@ -108,6 +108,18 @@ export default function WorkflowHistory({ params }: Props) {
     });
   }, [groupedHistoryEvents, queryParams]);
 
+  const filteredEventToGroupMap = useMemo(() => {
+    const groupMap = new Map<string, number>();
+
+    filteredGroupedHistoryEventsEntries.forEach(([_, group], index) => {
+      group.events.forEach(({ eventId }) => {
+        groupMap.set(eventId, index);
+      });
+    });
+
+    return groupMap;
+  }, [filteredGroupedHistoryEventsEntries]);
+
   const [areFiltersShown, setAreFiltersShown] = useState(true);
   const {
     isExpandAllEvents,
@@ -119,6 +131,30 @@ export default function WorkflowHistory({ params }: Props) {
   });
 
   const timelineSectionListRef = useRef<VirtuosoHandle>(null);
+
+  useEffect(() => {
+    if (
+      queryParams.historyEventId &&
+      !filteredEventToGroupMap.has(queryParams.historyEventId) &&
+      !isFetchingNextPage &&
+      hasNextPage
+    )
+      fetchNextPage();
+  }, [
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    filteredEventToGroupMap,
+    queryParams.historyEventId,
+  ]);
+
+  const selectedEventGroup = useMemo(
+    () =>
+      queryParams.historyEventId
+        ? filteredEventToGroupMap.get(queryParams.historyEventId)
+        : undefined,
+    [filteredEventToGroupMap, queryParams.historyEventId]
+  );
 
   return (
     <PageSection className={cls.pageContainer}>
@@ -149,9 +185,16 @@ export default function WorkflowHistory({ params }: Props) {
           <div role="list" className={cls.compactSection}>
             <Virtuoso
               data={filteredGroupedHistoryEventsEntries}
+              initialTopMostItemIndex={
+                selectedEventGroup && {
+                  index: selectedEventGroup,
+                  align: 'start',
+                  behavior: 'smooth',
+                }
+              }
               itemContent={(
                 index,
-                [groupId, { label, status, timeLabel, badges }]
+                [groupId, { label, status, timeLabel, badges, events }]
               ) => (
                 <div role="listitem" className={cls.compactCardContainer}>
                   <WorkflowHistoryCompactEventCard
@@ -167,7 +210,11 @@ export default function WorkflowHistory({ params }: Props) {
                         align: 'start',
                         behavior: 'smooth',
                       });
+                      pageFiltersRest.setQueryParams({
+                        historyEventId: events[events.length - 1].eventId,
+                      });
                     }}
+                    isSelected={index === selectedEventGroup}
                   />
                 </div>
               )}
@@ -180,6 +227,13 @@ export default function WorkflowHistory({ params }: Props) {
             <Virtuoso
               useWindowScroll
               data={filteredGroupedHistoryEventsEntries}
+              initialTopMostItemIndex={
+                selectedEventGroup && {
+                  index: selectedEventGroup,
+                  align: 'start',
+                  behavior: 'smooth',
+                }
+              }
               ref={timelineSectionListRef}
               itemContent={(index, [groupId, group]) => (
                 <WorkflowHistoryTimelineGroup
