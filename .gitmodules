@@ -1,0 +1,3 @@
+[submodule "cadence-idl"]
+	path = cadence-idl
+	url = https://github.com/cadence-workflow/cadence-idl
