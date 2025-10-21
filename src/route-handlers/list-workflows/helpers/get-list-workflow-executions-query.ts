@@ -24,7 +24,7 @@ export default function getListWorkflowExecutionsQuery({
   const searchQueries: Array<string> = [];
   if (search) {
     searchQueries.push(
-      `(WorkflowType = "${search}" OR WorkflowID = "${search}" OR RunID = "${search}")`
+      `(WorkflowType LIKE "${search}" OR WorkflowID LIKE "${search}" OR RunID = "${search}")`
     );
   }
 
