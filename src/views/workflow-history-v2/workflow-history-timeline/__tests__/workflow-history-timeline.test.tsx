@@ -43,7 +43,7 @@ jest.mock(
 );
 
 jest.mock(
-  '@/views/workflow-history/workflow-history-event-status-badge/workflow-history-event-status-badge',
+  '@/views/workflow-history-v2/workflow-history-event-status-badge/workflow-history-event-status-badge',
   () =>
     jest.fn((props: { status: string; statusReady: boolean; size: string }) => (
       <div data-testid="status-badge" data-status={props.status}>
