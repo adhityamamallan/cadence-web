@@ -1,0 +1,74 @@
+diff --git a/node_modules/react-input-mask/index.js b/node_modules/react-input-mask/index.js
+index d8d5de5..fc738de 100644
+--- a/node_modules/react-input-mask/index.js
++++ b/node_modules/react-input-mask/index.js
+@@ -1,5 +1,4 @@
+-if (process.env.NODE_ENV === 'production') {
+-  module.exports = require('./lib/react-input-mask.production.min.js');
+-} else {
+-  module.exports = require('./lib/react-input-mask.development.js');
+-}
++// Patched for React 19 compatibility (findDOMNode removed): always use the
++// development build, which has been patched to track the input DOM node via a
++// merged ref instead of ReactDOM.findDOMNode. See patches/react-input-mask+2.0.4.patch.
++module.exports = require('./lib/react-input-mask.development.js');
+diff --git a/node_modules/react-input-mask/lib/react-input-mask.development.js b/node_modules/react-input-mask/lib/react-input-mask.development.js
+index 3de5901..123cb05 100644
+--- a/node_modules/react-input-mask/lib/react-input-mask.development.js
++++ b/node_modules/react-input-mask/lib/react-input-mask.development.js
+@@ -525,7 +525,9 @@ function (_React$Component) {
+         return null;
+       }
+ 
+-      var input = reactDom.findDOMNode(_assertThisInitialized(_assertThisInitialized(_this)));
++      // Patched for React 19: ReactDOM.findDOMNode was removed, so we rely on the
++      // DOM node captured by the merged ref in render() instead.
++      var input = _this._inputDOMNode;
+       var isDOMNode = typeof window !== 'undefined' && input instanceof window.Element; // workaround for react-test-renderer
+       // https://github.com/sanniassin/react-input-mask/issues/147
+ 
+@@ -533,17 +535,31 @@ function (_React$Component) {
+         return null;
+       }
+ 
+-      if (input.nodeName !== 'INPUT') {
++      if (input && input.nodeName !== 'INPUT') {
+         input = input.querySelector('input');
+       }
+ 
+       if (!input) {
+-        throw new Error('react-input-mask: inputComponent doesn\'t contain input node');
++        return null;
+       }
+ 
+       return input;
+     };
+ 
++    // Patched for React 19: captures the rendered input DOM node and forwards to
++    // any ref already attached to the (cloned) input element.
++    _this.captureInputRef = function (existingRef) {
++      return function (node) {
++        _this._inputDOMNode = node;
++
++        if (typeof existingRef === 'function') {
++          existingRef(node);
++        } else if (existingRef && typeof existingRef === 'object') {
++          existingRef.current = node;
++        }
++      };
++    };
++
+     _this.getInputValue = function () {
+       var input = _this.getInputDOMNode();
+ 
+@@ -1116,6 +1132,10 @@ function (_React$Component) {
+       }
+     }
+ 
++    // Patched for React 19: merge a capturing ref so getInputDOMNode can access
++    // the DOM node without the removed ReactDOM.findDOMNode.
++    var existingRef = inputElement.props ? inputElement.props.ref : undefined;
++    changedProps.ref = this.captureInputRef(existingRef);
+     inputElement = React.cloneElement(inputElement, changedProps);
+     return inputElement;
+   };

@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import { use } from 'react';
 
 import { notFound } from 'next/navigation';
 
@@ -14,7 +14,7 @@ import { type Props } from './schedule-page-tab-content.types';
 
 export default function SchedulePageTabContent({ params }: Props) {
   const { cls } = useStyletronClasses(cssStyles);
-  const decodedParams = decodeUrlParams(params) as SchedulePageTabsParams;
+  const decodedParams = decodeUrlParams(use(params)) as SchedulePageTabsParams;
   const tabConfig = schedulePageTabsConfig[decodedParams.scheduleTab];
 
   if (!tabConfig) {

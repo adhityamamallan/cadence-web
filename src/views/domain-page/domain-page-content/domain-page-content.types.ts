@@ -7,7 +7,7 @@ export type DomainPageContentParams = {
 };
 
 export type Props = {
-  params: DomainPageContentParams;
+  params: Promise<DomainPageContentParams>;
 };
 
 export type DomainPageTabContentProps = {

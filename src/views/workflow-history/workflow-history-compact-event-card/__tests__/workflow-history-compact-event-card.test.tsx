@@ -84,7 +84,7 @@ describe('WorkflowHistoryCompactEventCard', () => {
       expect.objectContaining({
         showOngoingOnly: true,
       }),
-      {}
+      undefined
     );
   });
 

@@ -132,8 +132,10 @@ describe(RedirectDomain.name, () => {
     it(test.name, async () => {
       try {
         await RedirectDomain({
-          params: { domainParams: test.urlParams },
-          searchParams: test.queryParams ?? undefined,
+          params: Promise.resolve({ domainParams: test.urlParams }),
+          searchParams: test.queryParams
+            ? Promise.resolve(test.queryParams)
+            : undefined,
         });
       } catch (e) {
         if (e instanceof Error && e.message !== 'Redirected') {

@@ -50,12 +50,14 @@ describe('WorkflowPage', () => {
 });
 
 async function setup({ params, children }: Partial<Props>) {
-  const p = params || {
-    cluster: 'example-cluster',
-    domain: 'example-domain',
-    runId: 'example-runId',
-    workflowId: 'example-workflowId',
-  };
+  const p =
+    params ||
+    Promise.resolve({
+      cluster: 'example-cluster',
+      domain: 'example-domain',
+      runId: 'example-runId',
+      workflowId: 'example-workflowId',
+    });
   const c = children || null;
   const workflowPage = await WorkflowPage({ params: p, children: c });
   return render(workflowPage);

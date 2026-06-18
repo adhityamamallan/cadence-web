@@ -1,5 +1,5 @@
 export type Props = {
-  params: RouteParams;
+  params: Promise<RouteParams>;
 };
 
 export type RouteParams = {

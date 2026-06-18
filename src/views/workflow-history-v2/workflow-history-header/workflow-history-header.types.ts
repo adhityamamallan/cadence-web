@@ -37,6 +37,6 @@ export type Props = {
   decodedPageUrlParams: WorkflowHistoryProps['params'];
   isTimelineShown: boolean;
   setIsTimelineShown: React.Dispatch<React.SetStateAction<boolean>>;
-  timelineVirtuosoRef: React.RefObject<VirtuosoHandle>;
+  timelineVirtuosoRef: React.RefObject<VirtuosoHandle | null>;
   timelineItemToHighlightId?: string;
 };

@@ -2,6 +2,8 @@ import React from 'react';
 
 import { render, screen } from '@/test-utils/rtl';
 
+import resolvedPromise from '@/test-utils/resolved-promise';
+
 import DomainPageContent from '../domain-page-content';
 import type {
   DomainPageContentParams,
@@ -55,7 +57,7 @@ const mockParams: DomainPageContentParams = {
 
 describe('DomainPageContent', () => {
   it('renders tab content with correct params when domain tab exists in config', () => {
-    render(<DomainPageContent params={mockParams} />);
+    render(<DomainPageContent params={resolvedPromise(mockParams)} />);
     expect(
       screen.getByText(
         'Mock Tab workflows -- Domain: mock-domain, Cluster: mock-cluster'
@@ -65,8 +67,10 @@ describe('DomainPageContent', () => {
 
   it('throws a Not Found error if domain tab does not exist in config', () => {
     render(
-      // @ts-expect-error allow passing unknown domainTab to test recieving wrong value as a param
-      <DomainPageContent params={{ ...mockParams, domainTab: 'unknown-tab' }} />
+      <DomainPageContent
+        // @ts-expect-error allow passing unknown domainTab to test recieving wrong value as a param
+        params={resolvedPromise({ ...mockParams, domainTab: 'unknown-tab' })}
+      />
     );
     expect(mockNotFound).toHaveBeenCalled();
   });

@@ -8,6 +8,6 @@ export type WorkflowPageParams = {
 };
 
 export type Props = {
-  params: WorkflowPageParams;
+  params: Promise<WorkflowPageParams>;
   children: React.ReactNode;
 };

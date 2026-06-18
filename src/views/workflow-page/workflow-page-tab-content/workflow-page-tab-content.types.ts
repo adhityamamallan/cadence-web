@@ -20,5 +20,5 @@ export type WorkflowPageTabContentProps = {
 };
 
 export type Props = {
-  params: WorkflowPageTabsParams;
+  params: Promise<WorkflowPageTabsParams>;
 };

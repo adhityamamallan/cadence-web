@@ -19,7 +19,7 @@ export type Props = {
 };
 
 export type WorkflowSummaryDetailsComponent =
-  | keyof JSX.IntrinsicElements
+  | keyof React.JSX.IntrinsicElements
   | React.JSXElementConstructor<any>;
 
 export type WorkflowSummaryFieldArgs = {

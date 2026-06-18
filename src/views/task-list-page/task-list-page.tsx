@@ -5,8 +5,8 @@ import decodeUrlParams from '@/utils/decode-url-params';
 import TaskListLoader from './task-list-loader/task-list-loader';
 import { type RouteParams, type Props } from './task-list-page.types';
 
-export default function TaskListPage(props: Props) {
-  const decodedParams = decodeUrlParams(props.params) as RouteParams;
+export default async function TaskListPage(props: Props) {
+  const decodedParams = decodeUrlParams(await props.params) as RouteParams;
 
   return (
     <Suspense>

@@ -34,5 +34,5 @@ export type Props = {
 
   // Virtualization props
   onVisibleRangeChange: (r: ListRange) => void;
-  virtuosoRef: React.RefObject<VirtuosoHandle>;
+  virtuosoRef: React.RefObject<VirtuosoHandle | null>;
 };

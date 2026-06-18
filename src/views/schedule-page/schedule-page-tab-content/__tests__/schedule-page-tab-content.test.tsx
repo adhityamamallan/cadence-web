@@ -2,6 +2,8 @@ import React from 'react';
 
 import { render, screen } from '@/test-utils/rtl';
 
+import resolvedPromise from '@/test-utils/resolved-promise';
+
 import { type SchedulePageTabsParams } from '../../schedule-page-tabs/schedule-page-tabs.types';
 import SchedulePageTabContent from '../schedule-page-tab-content';
 
@@ -41,12 +43,12 @@ function setup({
 } = {}) {
   render(
     <SchedulePageTabContent
-      params={{
+      params={resolvedPromise({
         domain: 'test-domain',
         cluster: 'test-cluster',
         scheduleId: 'my-schedule',
         scheduleTab,
-      }}
+      })}
     />
   );
 }

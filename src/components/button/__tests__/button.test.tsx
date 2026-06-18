@@ -55,31 +55,29 @@ describe('Button', () => {
   });
 
   it('applies correct aria-label for skeleton loading with string children', async () => {
-    await setup({
+    const { mockBaseUIButton } = await setup({
       children: 'Save changes',
       isLoading: true,
       loadingIndicatorType: 'skeleton',
     });
 
-    expect(mockBaseUIButton).toHaveBeenCalledWith(
+    expect(mockBaseUIButton.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         'aria-label': 'loading Save changes',
-      }),
-      expect.anything()
+      })
     );
   });
 
   it('applies default aria-label for skeleton loading with non-string children', async () => {
-    await setup({
+    const { mockBaseUIButton } = await setup({
       children: <span>Complex content</span>,
       isLoading: true,
       loadingIndicatorType: 'skeleton',
     });
-    expect(mockBaseUIButton).toHaveBeenCalledWith(
+    expect(mockBaseUIButton.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         'aria-label': 'content is loading',
-      }),
-      expect.anything()
+      })
     );
   });
 
@@ -106,11 +104,10 @@ describe('Button', () => {
     });
 
     // Verify that isLoading is passed to the BaseUI Button
-    expect(mockBaseUIButton).toHaveBeenCalledWith(
+    expect(mockBaseUIButton.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         isLoading: true,
-      }),
-      expect.anything()
+      })
     );
   });
 
@@ -122,11 +119,10 @@ describe('Button', () => {
     });
 
     // Verify that isLoading is set to false for BaseUI Button during skeleton loading
-    expect(mockBaseUIButton).toHaveBeenCalledWith(
+    expect(mockBaseUIButton.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         isLoading: false,
-      }),
-      expect.anything()
+      })
     );
   });
 
@@ -145,7 +141,7 @@ describe('Button', () => {
     });
 
     // Verify that external overrides are merged and passed to BaseUI Button
-    expect(mockBaseUIButton).toHaveBeenCalledWith(
+    expect(mockBaseUIButton.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         overrides: expect.objectContaining({
           BaseButton: expect.objectContaining({
@@ -154,8 +150,7 @@ describe('Button', () => {
             }),
           }),
         }),
-      }),
-      expect.anything()
+      })
     );
   });
 
@@ -165,11 +160,10 @@ describe('Button', () => {
       isLoading: true,
     });
 
-    expect(mockBaseUIButton).toHaveBeenCalledWith(
+    expect(mockBaseUIButton.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         isLoading: true,
-      }),
-      expect.anything()
+      })
     );
   });
 
@@ -181,13 +175,12 @@ describe('Button', () => {
       shape: 'pill',
     });
 
-    expect(mockBaseUIButton).toHaveBeenCalledWith(
+    expect(mockBaseUIButton.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         size: 'compact',
         kind: 'secondary',
         shape: 'pill',
-      }),
-      expect.anything()
+      })
     );
   });
 

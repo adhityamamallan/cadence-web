@@ -7,6 +7,6 @@ export type SchedulePageLayoutParams = {
 };
 
 export type Props = {
-  params: SchedulePageLayoutParams;
+  params: Promise<SchedulePageLayoutParams>;
   children: React.ReactNode;
 };

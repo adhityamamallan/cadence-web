@@ -38,11 +38,15 @@ const getCustomizedConfig = async () => {
   const jestConfig = await createJestConfig(config)();
   return {
     ...jestConfig,
-    // replacing nextjs node_modules ignore patterns with a pattern that doesn't ignore es modules
+    // Replace Next.js' node_modules ignore patterns with one that doesn't ignore
+    // the ES module packages we depend on, while preserving its CSS-module pattern.
     // link to discussion and fix https://github.com/vercel/next.js/issues/40183#issuecomment-1249077718
-    transformIgnorePatterns: jestConfig.transformIgnorePatterns?.filter(
-      (ptn) => ptn !== '/node_modules/'
-    ),
+    transformIgnorePatterns: [
+      `/node_modules/(?!(${esModules.join('|')})/)`,
+      ...(jestConfig.transformIgnorePatterns?.filter((ptn) =>
+        ptn.startsWith('^')
+      ) ?? []),
+    ],
   };
 };
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

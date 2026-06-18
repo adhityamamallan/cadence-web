@@ -2,7 +2,7 @@ import { type DescribeDomainResponse } from '@/route-handlers/describe-domain/de
 import { type WorkflowListItem } from '@/route-handlers/list-workflows/list-workflows.types';
 
 export type Props = {
-  params: { domain: string; cluster: string };
+  params: Promise<{ domain: string; cluster: string }>;
   children: React.ReactNode;
 };
 
