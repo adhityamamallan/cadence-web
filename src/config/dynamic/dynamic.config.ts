@@ -44,6 +44,7 @@ import {
 import workflowDiagnosticsEnabled from './resolvers/workflow-diagnostics-enabled';
 import workflowDiagnosticsInHistoryEnabled from './resolvers/workflow-diagnostics-in-history-enabled';
 import workflowHomeEnabled from './resolvers/workflow-home-enabled';
+import workflowHomeRefreshIntervalMs from './resolvers/workflow-home-refresh-interval-ms';
 import workflowsListEnabled from './resolvers/workflows-list-enabled';
 
 const dynamicConfigs: {
@@ -104,6 +105,12 @@ const dynamicConfigs: {
   WORKFLOW_HOME_ENABLED: ConfigAsyncResolverDefinition<
     undefined,
     boolean,
+    'request',
+    true
+  >;
+  WORKFLOW_HOME_REFRESH_INTERVAL_MS: ConfigAsyncResolverDefinition<
+    undefined,
+    number,
     'request',
     true
   >;
@@ -209,6 +216,11 @@ const dynamicConfigs: {
   },
   WORKFLOW_HOME_ENABLED: {
     resolver: workflowHomeEnabled,
+    evaluateOn: 'request',
+    isPublic: true,
+  },
+  WORKFLOW_HOME_REFRESH_INTERVAL_MS: {
+    resolver: workflowHomeRefreshIntervalMs,
     evaluateOn: 'request',
     isPublic: true,
   },

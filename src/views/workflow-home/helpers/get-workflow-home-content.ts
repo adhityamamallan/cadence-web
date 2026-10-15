@@ -41,7 +41,8 @@ export default function getWorkflowHomeContent({
     return { mode: 'summary' };
   }
 
-  if (homeQuery.error) {
+  // A failed background refetch keeps showing the last good page
+  if (homeQuery.error && !homeQuery.data) {
     return {
       mode: 'summary-with-notice',
       notice: `Could not load the home page: ${homeQuery.error.message}`,

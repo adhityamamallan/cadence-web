@@ -92,11 +92,37 @@ describe(WorkflowHome.name, () => {
     await waitFor(() => expect(getHomeQueryCalls()).toBe(2));
   });
 
-  it('refetches the home query on action success', async () => {
+  it('refetches the home query on action success, then again after a delay', async () => {
     const { getHomeQueryCalls } = await setup({});
     await screen.findByText('Mock Markdown: # Home');
     mockMarkdownProps.mock.calls[0][0].onActionSuccess();
     await waitFor(() => expect(getHomeQueryCalls()).toBe(2));
+    await waitFor(() => expect(getHomeQueryCalls()).toBe(3), {
+      timeout: 2000,
+    });
+  });
+
+  it('polls the home query while the workflow is running', async () => {
+    const { getHomeQueryCalls } = await setup({
+      isRunning: true,
+      refreshIntervalMs: 50,
+    });
+    await screen.findByText('Mock Markdown: # Home');
+    await waitFor(() => expect(getHomeQueryCalls()).toBeGreaterThan(2));
+  });
+
+  it('does not poll the home query when the workflow is closed', async () => {
+    const { getHomeQueryCalls } = await setup({ refreshIntervalMs: 50 });
+    await screen.findByText('Mock Markdown: # Home');
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(getHomeQueryCalls()).toBe(1);
+  });
+
+  it('does not poll the home query when the interval is 0', async () => {
+    const { getHomeQueryCalls } = await setup({ isRunning: true });
+    await screen.findByText('Mock Markdown: # Home');
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(getHomeQueryCalls()).toBe(1);
   });
 });
 
@@ -106,12 +132,16 @@ async function setup({
   queryError,
   nonMarkdown,
   homeView = 'home',
+  isRunning = false,
+  refreshIntervalMs = 0,
 }: {
   enabled?: boolean;
   queryTypes?: string[];
   queryError?: boolean;
   nonMarkdown?: boolean;
   homeView?: 'home' | 'summary';
+  isRunning?: boolean;
+  refreshIntervalMs?: number;
 }) {
   const user = userEvent.setup();
   let homeQueryCalls = 0;
@@ -131,13 +161,31 @@ async function setup({
           path: '/api/config',
           httpMethod: 'GET',
           mockOnce: false,
-          httpResolver: async () => HttpResponse.json(enabled),
+          httpResolver: async ({ request }) => {
+            const configKey = new URL(request.url).searchParams.get(
+              'configKey'
+            );
+            return HttpResponse.json(
+              configKey === 'WORKFLOW_HOME_REFRESH_INTERVAL_MS'
+                ? refreshIntervalMs
+                : enabled
+            );
+          },
         },
         {
           path: '/api/domains/:domain/:cluster/workflows/:workflowId/:runId',
           httpMethod: 'GET',
           mockOnce: false,
-          jsonResponse: mockDescribeWorkflowResponse,
+          jsonResponse: isRunning
+            ? {
+                ...mockDescribeWorkflowResponse,
+                workflowExecutionInfo: {
+                  ...mockDescribeWorkflowResponse.workflowExecutionInfo,
+                  closeStatus: null,
+                  closeEvent: null,
+                },
+              }
+            : mockDescribeWorkflowResponse,
         },
         {
           path: '/api/domains/:domain/:cluster/workflows/:workflowId/:runId/query',

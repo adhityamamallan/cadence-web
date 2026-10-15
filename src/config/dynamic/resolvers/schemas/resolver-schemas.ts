@@ -106,6 +106,10 @@ const resolverSchemas: ResolverSchemas = {
     args: z.undefined(),
     returnType: z.boolean(),
   },
+  WORKFLOW_HOME_REFRESH_INTERVAL_MS: {
+    args: z.undefined(),
+    returnType: z.number(),
+  },
   ARCHIVAL_DEFAULT_SEARCH_ENABLED: {
     args: z.undefined(),
     returnType: z.boolean(),

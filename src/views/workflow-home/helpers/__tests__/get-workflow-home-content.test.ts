@@ -78,6 +78,16 @@ describe(getWorkflowHomeContent.name, () => {
     expect(content.mode).toBe('summary-with-notice');
   });
 
+  it('keeps the last good page when a background refetch fails', () => {
+    const content = setup({
+      homeQuery: {
+        data: markdownResponse,
+        error: { message: 'timeout' } as RequestError,
+      },
+    });
+    expect(content).toEqual({ mode: 'home', markdown: '# Hello' });
+  });
+
   it('returns a notice when the result is null', () => {
     const content = setup({
       homeQuery: { data: { result: null, rejected: null } },
