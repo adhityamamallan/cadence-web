@@ -3,9 +3,9 @@ import React, { useMemo } from 'react';
 
 import Blocks from '@/components/blocks/blocks';
 import CopyTextButton from '@/components/copy-text-button/copy-text-button';
-import Markdown from '@/components/markdown/markdown';
 import PrettyJson from '@/components/pretty-json/pretty-json';
 import losslessJsonStringify from '@/utils/lossless-json-stringify';
+import WorkflowMarkdown from '@/views/shared/workflow-markdown/workflow-markdown';
 
 import getQueryResultContent from './helpers/get-query-result-content';
 import { overrides, styled } from './workflow-queries-result.styles';
@@ -35,7 +35,7 @@ export default function WorkflowQueriesResult(props: Props) {
         )}
       {queryResultContent.contentType === 'markdown' &&
         queryResultContent.content !== undefined && (
-          <Markdown
+          <WorkflowMarkdown
             markdown={queryResultContent.content}
             domain={props.domain}
             cluster={props.cluster}
