@@ -62,8 +62,8 @@ export default function getWorkflowHomeContent({
   }
 
   if (
-    data.result.cadenceResponseType === 'formattedData' &&
-    data.result.format === 'text/markdown'
+    data.result?.cadenceResponseType === 'formattedData' &&
+    data.result?.format === 'text/markdown'
   ) {
     return { mode: 'home', markdown: data.result.data };
   }

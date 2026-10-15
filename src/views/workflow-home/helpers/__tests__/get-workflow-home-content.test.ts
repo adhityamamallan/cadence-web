@@ -78,6 +78,13 @@ describe(getWorkflowHomeContent.name, () => {
     expect(content.mode).toBe('summary-with-notice');
   });
 
+  it('returns a notice when the result is null', () => {
+    const content = setup({
+      homeQuery: { data: { result: null, rejected: null } },
+    });
+    expect(content.mode).toBe('summary-with-notice');
+  });
+
   it('returns home with the markdown', () => {
     expect(setup({})).toEqual({ mode: 'home', markdown: '# Hello' });
   });
