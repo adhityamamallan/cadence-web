@@ -15,8 +15,10 @@ jest.mock('@/components/markdown/markdown', () =>
 );
 
 describe(WorkflowMarkdown.name, () => {
-  it('registers the workflows tag', () => {
+  it('registers the workflow tags', () => {
     expect(WORKFLOW_MARKDOC_TAGS).toHaveProperty('workflows');
+    expect(WORKFLOW_MARKDOC_TAGS).toHaveProperty('input');
+    expect(WORKFLOW_MARKDOC_TAGS).toHaveProperty('result');
     expect(WORKFLOW_MARKDOC_COMPONENTS).toHaveProperty('MarkdocWorkflowsList');
   });
 

@@ -2,11 +2,19 @@ import { type ComponentType } from 'react';
 
 import { type Config } from '@markdoc/markdoc';
 
+import MarkdocWorkflowInput from '../markdoc-workflow-payload/markdoc-workflow-input';
+import {
+  workflowInputMarkdocSchema,
+  workflowResultMarkdocSchema,
+} from '../markdoc-workflow-payload/markdoc-workflow-payload.markdoc';
+import MarkdocWorkflowResult from '../markdoc-workflow-payload/markdoc-workflow-result';
 import MarkdocWorkflowsList from '../markdoc-workflows-list/markdoc-workflows-list';
 import { workflowsListMarkdocSchema } from '../markdoc-workflows-list/markdoc-workflows-list.markdoc';
 
 export const WORKFLOW_MARKDOC_TAGS: NonNullable<Config['tags']> = {
   workflows: workflowsListMarkdocSchema,
+  input: workflowInputMarkdocSchema,
+  result: workflowResultMarkdocSchema,
 };
 
 export const WORKFLOW_MARKDOC_COMPONENTS: Record<
@@ -14,4 +22,6 @@ export const WORKFLOW_MARKDOC_COMPONENTS: Record<
   ComponentType<never>
 > = {
   MarkdocWorkflowsList,
+  MarkdocWorkflowInput,
+  MarkdocWorkflowResult,
 };
