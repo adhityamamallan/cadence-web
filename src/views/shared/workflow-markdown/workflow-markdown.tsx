@@ -17,6 +17,7 @@ export default function WorkflowMarkdown(props: Props) {
       cluster={props.cluster}
       workflowId={props.workflowId}
       runId={props.runId}
+      onActionSuccess={props.onActionSuccess}
       extraTags={WORKFLOW_MARKDOC_TAGS}
       extraComponents={WORKFLOW_MARKDOC_COMPONENTS}
     />

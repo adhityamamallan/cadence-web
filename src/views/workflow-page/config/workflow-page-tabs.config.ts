@@ -1,5 +1,5 @@
 import {
-  MdListAlt,
+  MdHome,
   MdOutlineHistory,
   MdOutlineManageSearch,
   MdOutlineTerminal,
@@ -9,9 +9,9 @@ import { RiStethoscopeLine } from 'react-icons/ri';
 import getWorkflowDiagnosticsErrorConfig from '@/views/workflow-diagnostics/helpers/get-workflow-diagnostics-error-config';
 import WorkflowDiagnostics from '@/views/workflow-diagnostics/workflow-diagnostics';
 import WorkflowHistoryWrapper from '@/views/workflow-history/workflow-history-wrapper/workflow-history-wrapper';
+import WorkflowHome from '@/views/workflow-home/workflow-home';
 import WorkflowQueries from '@/views/workflow-queries/workflow-queries';
 import WorkflowStackTrace from '@/views/workflow-stack-trace/workflow-stack-trace';
-import WorkflowSummary from '@/views/workflow-summary/workflow-summary';
 
 import getWorkflowPageErrorConfig from '../helpers/get-workflow-page-error-config';
 import WorkflowPageDiagnosticsBadge from '../workflow-page-diagnostics-badge/workflow-page-diagnostics-badge';
@@ -22,9 +22,9 @@ const workflowPageTabsConfig: WorkflowPageTabsConfig<
   'summary' | 'history' | 'queries' | 'stack-trace' | 'diagnostics'
 > = {
   summary: {
-    title: 'Summary',
-    artwork: MdListAlt,
-    content: WorkflowSummary,
+    title: 'Home',
+    artwork: MdHome,
+    content: WorkflowHome,
     getErrorConfig: (err) =>
       getWorkflowPageErrorConfig(
         err,

@@ -4,4 +4,5 @@ export type Props = {
   cluster?: string;
   workflowId?: string;
   runId?: string;
+  onActionSuccess?: () => void;
 };

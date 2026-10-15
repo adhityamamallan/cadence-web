@@ -143,6 +143,7 @@ describe(WorkflowHistoryFiltersMenu.name, () => {
         ungroupedHistoryViewEnabled: undefined,
         historyEventIssues: false,
         selectedQueryName: undefined,
+        homeView: 'home',
       },
     });
 
@@ -159,6 +160,7 @@ describe(WorkflowHistoryFiltersMenu.name, () => {
         ungroupedHistoryViewEnabled: undefined,
         historyEventIssues: false,
         selectedQueryName: undefined,
+        homeView: 'home',
       },
     });
 
@@ -175,6 +177,7 @@ describe(WorkflowHistoryFiltersMenu.name, () => {
         ungroupedHistoryViewEnabled: undefined,
         historyEventIssues: false,
         selectedQueryName: undefined,
+        homeView: 'home',
       },
     });
 
@@ -191,6 +194,7 @@ describe(WorkflowHistoryFiltersMenu.name, () => {
         ungroupedHistoryViewEnabled: undefined,
         historyEventIssues: false,
         selectedQueryName: undefined,
+        homeView: 'home',
       },
     });
 
@@ -207,6 +211,7 @@ describe(WorkflowHistoryFiltersMenu.name, () => {
         ungroupedHistoryViewEnabled: undefined,
         historyEventIssues: false,
         selectedQueryName: undefined,
+        homeView: 'home',
       },
     });
 
@@ -227,6 +232,7 @@ describe(WorkflowHistoryFiltersMenu.name, () => {
         ungroupedHistoryViewEnabled: undefined,
         historyEventIssues: false,
         selectedQueryName: undefined,
+        homeView: 'home',
       },
     });
 
@@ -247,6 +253,7 @@ describe(WorkflowHistoryFiltersMenu.name, () => {
         ungroupedHistoryViewEnabled: undefined,
         historyEventIssues: false,
         selectedQueryName: undefined,
+        homeView: 'home',
       },
     });
 
@@ -266,6 +273,7 @@ describe(WorkflowHistoryFiltersMenu.name, () => {
         ungroupedHistoryViewEnabled: undefined,
         historyEventIssues: true,
         selectedQueryName: undefined,
+        homeView: 'home',
       },
     });
 
@@ -292,6 +300,7 @@ function setup(props: Partial<Props> = {}) {
       ungroupedHistoryViewEnabled: undefined,
       historyEventIssues: false,
       selectedQueryName: undefined,
+      homeView: 'home',
     },
     setQueryParams: mockSetQueryParams,
   };

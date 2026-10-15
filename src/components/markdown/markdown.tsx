@@ -15,6 +15,7 @@ export default function Markdown({
   cluster,
   workflowId,
   runId,
+  onActionSuccess,
   extraTags,
   extraComponents,
 }: Props) {
@@ -78,6 +79,7 @@ export default function Markdown({
       cluster={cluster}
       workflowId={workflowId}
       runId={runId}
+      onActionSuccess={onActionSuccess}
     >
       <styled.ViewContainer>
         {renderers.react(renderableTree, React, {

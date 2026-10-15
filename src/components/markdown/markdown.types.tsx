@@ -8,6 +8,7 @@ export type Props = {
   cluster?: string;
   workflowId?: string;
   runId?: string;
+  onActionSuccess?: () => void;
   extraTags?: Config['tags'];
   extraComponents?: Record<string, ComponentType<never>>;
 };

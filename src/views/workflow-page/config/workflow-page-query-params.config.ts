@@ -6,6 +6,7 @@ import { HISTORY_EVENT_FILTER_STATUSES } from '@/views/workflow-history/workflow
 import { type HistoryEventFilterStatus } from '@/views/workflow-history/workflow-history-filters-status/workflow-history-filters-status.types';
 import { WORKFLOW_HISTORY_EVENT_FILTERING_TYPES } from '@/views/workflow-history/workflow-history-filters-type/workflow-history-filters-type.constants';
 import { type WorkflowHistoryEventFilteringType } from '@/views/workflow-history/workflow-history-filters-type/workflow-history-filters-type.types';
+import { type WorkflowHomeView } from '@/views/workflow-home/workflow-home.types';
 
 const workflowPageQueryParamsConfig: [
   PageQueryParamMultiValue<
@@ -20,6 +21,7 @@ const workflowPageQueryParamsConfig: [
   PageQueryParam<'ungroupedHistoryViewEnabled', boolean | undefined>,
   PageQueryParam<'historyEventIssues', boolean>,
   PageQueryParam<'selectedQueryName', string | undefined>,
+  PageQueryParam<'homeView', WorkflowHomeView>,
 ] = [
   {
     key: 'historyEventTypes',
@@ -71,6 +73,12 @@ const workflowPageQueryParamsConfig: [
   {
     key: 'selectedQueryName',
     queryParamKey: 'q',
+  },
+  {
+    key: 'homeView',
+    queryParamKey: 'hv',
+    defaultValue: 'home',
+    parseValue: (v) => (v === 'summary' ? 'summary' : 'home'),
   },
 ] as const;
 

@@ -28,6 +28,10 @@ export default function WorkflowPageTabs() {
   const { data: isWorkflowDiagnosticsInHistoryEnabled } =
     useSuspenseConfigValue('WORKFLOW_DIAGNOSTICS_IN_HISTORY_ENABLED');
 
+  const { data: isWorkflowHomeEnabled } = useSuspenseConfigValue(
+    'WORKFLOW_HOME_ENABLED'
+  );
+
   const shouldShowDiagnosticsInSeparateTab =
     isWorkflowDiagnosticsEnabled && !isWorkflowDiagnosticsInHistoryEnabled;
 
@@ -43,11 +47,15 @@ export default function WorkflowPageTabs() {
     () =>
       Object.entries(filteredTabsConfig).map(([key, tabConfig]) => ({
         key,
-        title: tabConfig.title,
+        // The summary tab is titled "Home" only when the home page feature is on
+        title:
+          key === 'summary' && !isWorkflowHomeEnabled
+            ? 'Summary'
+            : tabConfig.title,
         artwork: tabConfig.artwork,
         endEnhancer: tabConfig.endEnhancer,
       })),
-    [filteredTabsConfig]
+    [filteredTabsConfig, isWorkflowHomeEnabled]
   );
 
   return (
