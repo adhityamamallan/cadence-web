@@ -15,6 +15,11 @@ jest.mock('@/components/markdown/markdown', () =>
 );
 
 describe(WorkflowMarkdown.name, () => {
+  it('registers the workflows tag', () => {
+    expect(WORKFLOW_MARKDOC_TAGS).toHaveProperty('workflows');
+    expect(WORKFLOW_MARKDOC_COMPONENTS).toHaveProperty('MarkdocWorkflowsList');
+  });
+
   it('passes markdown and context props through', () => {
     setup();
     expect(screen.getByText('Markdown Mock: # hi d c w r')).toBeInTheDocument();
