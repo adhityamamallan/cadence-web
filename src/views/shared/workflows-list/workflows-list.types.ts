@@ -52,6 +52,8 @@ export type SelectionParams = {
 };
 
 export type Props = {
+  domain: string;
+  cluster: string;
   workflows: Array<DomainWorkflow>;
   columns: Array<WorkflowsListColumn>;
   error: Error | null;

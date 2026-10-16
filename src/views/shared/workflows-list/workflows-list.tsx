@@ -15,6 +15,8 @@ import { styled } from './workflows-list.styles';
 import { type Props } from './workflows-list.types';
 
 export default function WorkflowsList({
+  domain,
+  cluster,
   workflows,
   columns,
   error,
@@ -100,7 +102,7 @@ export default function WorkflowsList({
                 <styled.GridRow
                   key={`${workflow.workflowID}-${workflow.runID}-${index}`}
                   $as={NextLink}
-                  href={`workflows/${encodeURIComponent(workflow.workflowID)}/${encodeURIComponent(workflow.runID)}`}
+                  href={`/domains/${encodeURIComponent(domain)}/${encodeURIComponent(cluster)}/workflows/${encodeURIComponent(workflow.workflowID)}/${encodeURIComponent(workflow.runID)}`}
                   prefetch={false}
                   $gridTemplateColumns={gridTemplateColumns}
                   draggable={false}
