@@ -90,22 +90,6 @@ describe(WorkflowCustomView.name, () => {
     expect(getQueryTypesCalls()).toBe(0);
   });
 
-  it('renders the empty state without any query when the memo is required and missing', async () => {
-    const { getQueryTypesCalls, getCustomViewQueryCalls } = await setup({
-      memoRequired: true,
-    });
-    expect(await screen.findByText('Mock Empty')).toBeInTheDocument();
-    expect(getQueryTypesCalls()).toBe(0);
-    expect(getCustomViewQueryCalls()).toBe(0);
-  });
-
-  it('renders the custom view when the memo is required and set', async () => {
-    await setup({ memoRequired: true, hasMemo: true });
-    expect(
-      await screen.findByText('Mock Markdown: # Custom view')
-    ).toBeInTheDocument();
-  });
-
   it('renders the error state when the query fails', async () => {
     await setup({ queryError: true });
     expect(
@@ -189,7 +173,6 @@ async function setup({
   isRunning = false,
   refreshIntervalMs = 0,
   hasMemo = false,
-  memoRequired = false,
 }: {
   enabled?: boolean;
   queryTypes?: string[];
@@ -200,7 +183,6 @@ async function setup({
   isRunning?: boolean;
   refreshIntervalMs?: number;
   hasMemo?: boolean;
-  memoRequired?: boolean;
 }) {
   const user = userEvent.setup();
   let customViewQueryCalls = 0;
@@ -222,9 +204,6 @@ async function setup({
             );
             if (configKey === 'WORKFLOW_CUSTOM_VIEW_REFRESH_INTERVAL_MS') {
               return HttpResponse.json(refreshIntervalMs);
-            }
-            if (configKey === 'WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED') {
-              return HttpResponse.json(memoRequired);
             }
             return HttpResponse.json(enabled);
           },

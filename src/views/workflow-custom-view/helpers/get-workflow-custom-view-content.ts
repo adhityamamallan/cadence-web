@@ -15,14 +15,12 @@ export default function getWorkflowCustomViewContent({
   isEnabled,
   isArchived,
   hasMemo,
-  isMemoRequired,
   queryTypes,
   customViewQuery,
 }: {
   isEnabled: boolean;
   isArchived: boolean;
   hasMemo: boolean;
-  isMemoRequired: boolean;
   queryTypes: QueryState<FetchWorkflowQueryTypesResponse>;
   customViewQuery: QueryState<QueryWorkflowResponse>;
 }): WorkflowCustomViewContent {
@@ -36,10 +34,6 @@ export default function getWorkflowCustomViewContent({
 
   // The memo replaces the query types check
   if (!hasMemo) {
-    if (isMemoRequired) {
-      return { mode: 'not-set-up' };
-    }
-
     if (queryTypes.isLoading) {
       return { mode: 'loading' };
     }

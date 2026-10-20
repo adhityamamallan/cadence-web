@@ -42,7 +42,6 @@ import {
   type WorkflowActionsEnabledConfig,
 } from './resolvers/workflow-actions-enabled.types';
 import workflowCustomViewEnabled from './resolvers/workflow-custom-view-enabled';
-import workflowCustomViewMemoRequired from './resolvers/workflow-custom-view-memo-required';
 import workflowCustomViewRefreshIntervalMs from './resolvers/workflow-custom-view-refresh-interval-ms';
 import workflowDiagnosticsEnabled from './resolvers/workflow-diagnostics-enabled';
 import workflowDiagnosticsInHistoryEnabled from './resolvers/workflow-diagnostics-in-history-enabled';
@@ -98,12 +97,6 @@ const dynamicConfigs: {
     true
   >;
   WORKFLOW_DIAGNOSTICS_IN_HISTORY_ENABLED: ConfigAsyncResolverDefinition<
-    undefined,
-    boolean,
-    'request',
-    true
-  >;
-  WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED: ConfigAsyncResolverDefinition<
     undefined,
     boolean,
     'request',
@@ -218,11 +211,6 @@ const dynamicConfigs: {
   },
   WORKFLOW_DIAGNOSTICS_IN_HISTORY_ENABLED: {
     resolver: workflowDiagnosticsInHistoryEnabled,
-    evaluateOn: 'request',
-    isPublic: true,
-  },
-  WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED: {
-    resolver: workflowCustomViewMemoRequired,
     evaluateOn: 'request',
     isPublic: true,
   },

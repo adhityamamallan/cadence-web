@@ -48,14 +48,7 @@ describe(WorkflowCustomViewEmpty.name, () => {
     ).toBeInTheDocument();
   });
 
-  it('says the memo is required when it is required', () => {
-    setup({ isMemoRequired: true });
-    expect(
-      screen.getByText('Set this memo when you start the workflow.')
-    ).toBeInTheDocument();
-  });
-
-  it('says the memo is optional when it is not required', () => {
+  it('says the memo is optional', () => {
     setup();
     expect(
       screen.getByText(/^Optional: set this memo when you start the workflow/)
@@ -68,6 +61,6 @@ describe(WorkflowCustomViewEmpty.name, () => {
   });
 });
 
-function setup({ isMemoRequired = false }: { isMemoRequired?: boolean } = {}) {
-  render(<WorkflowCustomViewEmpty isMemoRequired={isMemoRequired} />);
+function setup() {
+  render(<WorkflowCustomViewEmpty />);
 }

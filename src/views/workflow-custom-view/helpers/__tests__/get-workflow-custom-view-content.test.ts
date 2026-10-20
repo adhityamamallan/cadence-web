@@ -50,22 +50,6 @@ describe(getWorkflowCustomViewContent.name, () => {
     ).toEqual({ mode: 'ready', markdown: '# Hello' });
   });
 
-  it('returns not-set-up when the memo is required and missing', () => {
-    expect(
-      setup({
-        isMemoRequired: true,
-        queryTypes: { data: { queryTypes: [WORKFLOW_CUSTOM_VIEW_QUERY_NAME] } },
-      })
-    ).toEqual({ mode: 'not-set-up' });
-  });
-
-  it('returns ready when the memo is required and set', () => {
-    expect(setup({ isMemoRequired: true, hasMemo: true })).toEqual({
-      mode: 'ready',
-      markdown: '# Hello',
-    });
-  });
-
   it('returns loading while the custom view query loads', () => {
     expect(setup({ customViewQuery: { isLoading: true } })).toEqual({
       mode: 'loading',
@@ -140,7 +124,6 @@ function setup(
     isEnabled: true,
     isArchived: false,
     hasMemo: false,
-    isMemoRequired: false,
     queryTypes: { data: { queryTypes: [WORKFLOW_CUSTOM_VIEW_QUERY_NAME] } },
     customViewQuery: { data: markdownResponse },
     ...overrides,

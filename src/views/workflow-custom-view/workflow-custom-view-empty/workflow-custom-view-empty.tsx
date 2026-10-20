@@ -13,9 +13,8 @@ import {
 } from '../workflow-custom-view.constants';
 
 import { styled } from './workflow-custom-view-empty.styles';
-import { type Props } from './workflow-custom-view-empty.types';
 
-export default function WorkflowCustomViewEmpty({ isMemoRequired }: Props) {
+export default function WorkflowCustomViewEmpty() {
   return (
     <ErrorPanel
       omitLogging
@@ -29,11 +28,7 @@ export default function WorkflowCustomViewEmpty({ isMemoRequired }: Props) {
               <CopyTextButton textToCopy={WORKFLOW_CUSTOM_VIEW_GO_SNIPPET} />
             </styled.CopyButtonContainer>
           </styled.Snippet>
-          <span>
-            {isMemoRequired
-              ? WORKFLOW_CUSTOM_VIEW_MEMO_TEXTS.required
-              : WORKFLOW_CUSTOM_VIEW_MEMO_TEXTS.optional}
-          </span>
+          <span>{WORKFLOW_CUSTOM_VIEW_MEMO_TEXTS.optional}</span>
           <styled.Snippet>
             <styled.Code>{WORKFLOW_CUSTOM_VIEW_MEMO_GO_SNIPPET}</styled.Code>
             <styled.CopyButtonContainer>

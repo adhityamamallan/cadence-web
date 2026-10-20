@@ -26,7 +26,6 @@ export const WORKFLOW_CUSTOM_VIEW_GO_SNIPPET = `workflow.SetQueryHandler(ctx, "$
 export const WORKFLOW_CUSTOM_VIEW_MEMO_KEY = WORKFLOW_CUSTOM_VIEW_QUERY_NAME;
 
 export const WORKFLOW_CUSTOM_VIEW_MEMO_TEXTS = {
-  required: 'Set this memo when you start the workflow.',
   optional:
     'Optional: set this memo when you start the workflow, so the view loads faster.',
 } as const;

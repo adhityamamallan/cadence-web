@@ -35,10 +35,6 @@ export default function WorkflowCustomView({
     'WORKFLOW_CUSTOM_VIEW_ENABLED'
   );
 
-  const { data: isMemoRequired } = useSuspenseConfigValue(
-    'WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED'
-  );
-
   const { data: refreshIntervalMs } = useSuspenseConfigValue(
     'WORKFLOW_CUSTOM_VIEW_REFRESH_INTERVAL_MS'
   );
@@ -55,8 +51,8 @@ export default function WorkflowCustomView({
   const hasMemo = getHasCustomViewMemo(workflowDetails);
 
   const shouldDetect = isCustomViewEnabled && !isArchived && !isDetailsLoading;
-  // The memo says the query exists, and a required memo that is missing says it does not
-  const shouldFetchQueryTypes = shouldDetect && !hasMemo && !isMemoRequired;
+  // The memo says the query exists, so the query types check is skipped
+  const shouldFetchQueryTypes = shouldDetect && !hasMemo;
 
   const queryTypesQuery = useQuery<
     FetchWorkflowQueryTypesResponse,
@@ -133,7 +129,6 @@ export default function WorkflowCustomView({
     isEnabled: isCustomViewEnabled,
     isArchived,
     hasMemo,
-    isMemoRequired,
     queryTypes: {
       data: queryTypesQuery.data,
       error: queryTypesQuery.error,
@@ -166,7 +161,7 @@ export default function WorkflowCustomView({
         />
       );
     case 'not-set-up':
-      return <WorkflowCustomViewEmpty isMemoRequired={isMemoRequired} />;
+      return <WorkflowCustomViewEmpty />;
     case 'error':
       return (
         <ErrorPanel
