@@ -14,11 +14,15 @@ type QueryState<T> = {
 export default function getWorkflowCustomViewContent({
   isEnabled,
   isArchived,
+  hasMemo,
+  isMemoRequired,
   queryTypes,
   customViewQuery,
 }: {
   isEnabled: boolean;
   isArchived: boolean;
+  hasMemo: boolean;
+  isMemoRequired: boolean;
   queryTypes: QueryState<FetchWorkflowQueryTypesResponse>;
   customViewQuery: QueryState<QueryWorkflowResponse>;
 }): WorkflowCustomViewContent {
@@ -30,16 +34,25 @@ export default function getWorkflowCustomViewContent({
     return { mode: 'archived' };
   }
 
-  if (queryTypes.isLoading) {
-    return { mode: 'loading' };
-  }
+  // The memo replaces the query types check
+  if (!hasMemo) {
+    if (isMemoRequired) {
+      return { mode: 'not-set-up' };
+    }
 
-  if (queryTypes.error) {
-    return { mode: 'error', description: queryTypes.error.message };
-  }
+    if (queryTypes.isLoading) {
+      return { mode: 'loading' };
+    }
 
-  if (!queryTypes.data?.queryTypes.includes(WORKFLOW_CUSTOM_VIEW_QUERY_NAME)) {
-    return { mode: 'not-set-up' };
+    if (queryTypes.error) {
+      return { mode: 'error', description: queryTypes.error.message };
+    }
+
+    if (
+      !queryTypes.data?.queryTypes.includes(WORKFLOW_CUSTOM_VIEW_QUERY_NAME)
+    ) {
+      return { mode: 'not-set-up' };
+    }
   }
 
   // A failed background refetch keeps showing the last good page

@@ -16,6 +16,7 @@ import WorkflowMarkdown from '@/views/shared/workflow-markdown/workflow-markdown
 import { useDescribeWorkflow } from '../workflow-page/hooks/use-describe-workflow';
 import { type WorkflowPageTabContentProps } from '../workflow-page/workflow-page-tab-content/workflow-page-tab-content.types';
 
+import getHasCustomViewMemo from './helpers/get-has-custom-view-memo';
 import getWorkflowCustomViewContent from './helpers/get-workflow-custom-view-content';
 import WorkflowCustomViewEmpty from './workflow-custom-view-empty/workflow-custom-view-empty';
 import WorkflowCustomViewHeader from './workflow-custom-view-header/workflow-custom-view-header';
@@ -34,6 +35,10 @@ export default function WorkflowCustomView({
     'WORKFLOW_CUSTOM_VIEW_ENABLED'
   );
 
+  const { data: isMemoRequired } = useSuspenseConfigValue(
+    'WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED'
+  );
+
   const { data: refreshIntervalMs } = useSuspenseConfigValue(
     'WORKFLOW_CUSTOM_VIEW_REFRESH_INTERVAL_MS'
   );
@@ -47,7 +52,11 @@ export default function WorkflowCustomView({
   const isRunning =
     !closeStatus || closeStatus === 'WORKFLOW_EXECUTION_CLOSE_STATUS_INVALID';
 
+  const hasMemo = getHasCustomViewMemo(workflowDetails);
+
   const shouldDetect = isCustomViewEnabled && !isArchived && !isDetailsLoading;
+  // The memo says the query exists, and a required memo that is missing says it does not
+  const shouldFetchQueryTypes = shouldDetect && !hasMemo && !isMemoRequired;
 
   const queryTypesQuery = useQuery<
     FetchWorkflowQueryTypesResponse,
@@ -58,13 +67,15 @@ export default function WorkflowCustomView({
       request(
         `/api/domains/${domain}/${cluster}/workflows/${workflowId}/${runId}/query`
       ).then((res) => res.json()),
-    enabled: shouldDetect,
+    enabled: shouldFetchQueryTypes,
   });
 
   const hasCustomViewQuery =
-    queryTypesQuery.data?.queryTypes.includes(
+    hasMemo ||
+    (queryTypesQuery.data?.queryTypes.includes(
       WORKFLOW_CUSTOM_VIEW_QUERY_NAME
-    ) ?? false;
+    ) ??
+      false);
 
   const customViewQuery = useQuery<QueryWorkflowResponse, RequestError>({
     // Same key shape as the Queries tab, so both tabs share the cached result.
@@ -109,13 +120,20 @@ export default function WorkflowCustomView({
 
   const { refetch: refetchQueryTypes } = queryTypesQuery;
   const handleRetry = useCallback(() => {
-    refetchQueryTypes();
+    if (shouldFetchQueryTypes) refetchQueryTypes();
     if (hasCustomViewQuery) refetchCustomView();
-  }, [refetchQueryTypes, hasCustomViewQuery, refetchCustomView]);
+  }, [
+    refetchQueryTypes,
+    shouldFetchQueryTypes,
+    hasCustomViewQuery,
+    refetchCustomView,
+  ]);
 
   const content = getWorkflowCustomViewContent({
     isEnabled: isCustomViewEnabled,
     isArchived,
+    hasMemo,
+    isMemoRequired,
     queryTypes: {
       data: queryTypesQuery.data,
       error: queryTypesQuery.error,
@@ -148,7 +166,7 @@ export default function WorkflowCustomView({
         />
       );
     case 'not-set-up':
-      return <WorkflowCustomViewEmpty />;
+      return <WorkflowCustomViewEmpty isMemoRequired={isMemoRequired} />;
     case 'error':
       return (
         <ErrorPanel

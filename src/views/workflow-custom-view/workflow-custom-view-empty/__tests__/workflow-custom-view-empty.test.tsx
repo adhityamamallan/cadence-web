@@ -1,6 +1,5 @@
 import { render, screen } from '@/test-utils/rtl';
 
-import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '../../workflow-custom-view.constants';
 import WorkflowCustomViewEmpty from '../workflow-custom-view-empty';
 
 jest.mock('@/components/copy-text-button/copy-text-button', () =>
@@ -32,10 +31,34 @@ describe(WorkflowCustomViewEmpty.name, () => {
   it('renders the Go snippet with a copy button', () => {
     setup();
     expect(
-      screen.getByText(new RegExp(`Copy: .*${WORKFLOW_CUSTOM_VIEW_QUERY_NAME}`))
+      screen.getByText(/Copy: workflow\.SetQueryHandler/)
     ).toBeInTheDocument();
     expect(
       screen.getByText(/workflow\.SetQueryHandler/, { selector: 'pre' })
+    ).toBeInTheDocument();
+  });
+
+  it('renders the memo snippet with a copy button', () => {
+    setup();
+    expect(
+      screen.getByText(/StartWorkflowOptions/, { selector: 'pre' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Copy: client\.StartWorkflowOptions/)
+    ).toBeInTheDocument();
+  });
+
+  it('says the memo is required when it is required', () => {
+    setup({ isMemoRequired: true });
+    expect(
+      screen.getByText('Set this memo when you start the workflow.')
+    ).toBeInTheDocument();
+  });
+
+  it('says the memo is optional when it is not required', () => {
+    setup();
+    expect(
+      screen.getByText(/^Optional: set this memo when you start the workflow/)
     ).toBeInTheDocument();
   });
 
@@ -45,6 +68,6 @@ describe(WorkflowCustomViewEmpty.name, () => {
   });
 });
 
-function setup() {
-  render(<WorkflowCustomViewEmpty />);
+function setup({ isMemoRequired = false }: { isMemoRequired?: boolean } = {}) {
+  render(<WorkflowCustomViewEmpty isMemoRequired={isMemoRequired} />);
 }

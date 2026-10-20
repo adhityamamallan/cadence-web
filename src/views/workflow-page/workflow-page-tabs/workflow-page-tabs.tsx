@@ -9,8 +9,10 @@ import PageTabs from '@/components/page-tabs/page-tabs';
 import useSuspenseConfigValue from '@/hooks/use-config-value/use-suspense-config-value';
 import decodeUrlParams from '@/utils/decode-url-params';
 import WorkflowActions from '@/views/workflow-actions/workflow-actions';
+import getHasCustomViewMemo from '@/views/workflow-custom-view/helpers/get-has-custom-view-memo';
 
 import workflowPageTabsConfig from '../config/workflow-page-tabs.config';
+import { useDescribeWorkflow } from '../hooks/use-describe-workflow';
 import WorkflowPageCliCommandsButton from '../workflow-page-cli-commands-button/workflow-page-cli-commands-button';
 
 import { styled } from './workflow-page-tabs.styles';
@@ -32,6 +34,23 @@ export default function WorkflowPageTabs() {
     'WORKFLOW_CUSTOM_VIEW_ENABLED'
   );
 
+  const { data: isCustomViewMemoRequired } = useSuspenseConfigValue(
+    'WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED'
+  );
+
+  // Shares the cache with the rest of the page. Skipped when the memo is not needed.
+  const { data: workflowDetails } = useDescribeWorkflow({
+    domain: decodedParams.domain,
+    cluster: decodedParams.cluster,
+    workflowId: decodedParams.workflowId,
+    runId: decodedParams.runId,
+    enabled: isWorkflowCustomViewEnabled && isCustomViewMemoRequired,
+  });
+  const hasCustomViewMemo = getHasCustomViewMemo(workflowDetails);
+  const shouldShowCustomView =
+    isWorkflowCustomViewEnabled &&
+    (!isCustomViewMemoRequired || hasCustomViewMemo);
+
   const shouldShowDiagnosticsInSeparateTab =
     isWorkflowDiagnosticsEnabled && !isWorkflowDiagnosticsInHistoryEnabled;
 
@@ -39,9 +58,9 @@ export default function WorkflowPageTabs() {
     () =>
       omit(workflowPageTabsConfig, [
         ...(shouldShowDiagnosticsInSeparateTab ? [] : ['diagnostics' as const]),
-        ...(isWorkflowCustomViewEnabled ? [] : ['custom-view' as const]),
+        ...(shouldShowCustomView ? [] : ['custom-view' as const]),
       ]),
-    [shouldShowDiagnosticsInSeparateTab, isWorkflowCustomViewEnabled]
+    [shouldShowDiagnosticsInSeparateTab, shouldShowCustomView]
   );
 
   const tabList = useMemo(

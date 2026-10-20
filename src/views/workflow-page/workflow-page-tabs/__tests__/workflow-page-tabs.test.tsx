@@ -6,7 +6,9 @@ import { render, screen, act, fireEvent } from '@/test-utils/rtl';
 
 import ErrorBoundary from '@/components/error-boundary/error-boundary';
 import { type GetConfigResponse } from '@/route-handlers/get-config/get-config.types';
+import { WORKFLOW_CUSTOM_VIEW_MEMO_KEY } from '@/views/workflow-custom-view/workflow-custom-view.constants';
 
+import { mockDescribeWorkflowResponse } from '../../__fixtures__/describe-workflow-response';
 import { mockWorkflowPageTabsConfig } from '../../__fixtures__/workflow-page-tabs-config';
 import WorkflowPageTabs from '../workflow-page-tabs';
 
@@ -102,6 +104,22 @@ describe('WorkflowPageTabs', () => {
     expect(screen.queryByTestId('custom-view-artwork')).toBeNull();
   });
 
+  it('hides the custom view tab when the memo is required and missing', async () => {
+    await setup({ enableCustomView: true, memoRequired: true });
+
+    expect(screen.queryByText('Custom view')).toBeNull();
+  });
+
+  it('shows the custom view tab when the memo is required and set', async () => {
+    await setup({
+      enableCustomView: true,
+      memoRequired: true,
+      hasMemo: true,
+    });
+
+    expect(await screen.findByText('Custom view')).toBeInTheDocument();
+  });
+
   it('renders tabs buttons correctly', async () => {
     await setup({ enableDiagnostics: false });
 
@@ -170,11 +188,15 @@ async function setup({
   enableDiagnostics,
   enableDiagnosticsInHistory,
   enableCustomView,
+  memoRequired,
+  hasMemo,
 }: {
   error?: boolean;
   enableDiagnostics?: boolean;
   enableDiagnosticsInHistory?: boolean;
   enableCustomView?: boolean;
+  memoRequired?: boolean;
+  hasMemo?: boolean;
 }) {
   render(
     <ErrorBoundary
@@ -217,9 +239,34 @@ async function setup({
                   (enableCustomView ??
                     false) satisfies GetConfigResponse<'WORKFLOW_CUSTOM_VIEW_ENABLED'>
                 );
+              case 'WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED':
+                return HttpResponse.json(
+                  (memoRequired ??
+                    false) satisfies GetConfigResponse<'WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED'>
+                );
               default:
                 return HttpResponse.json(false);
             }
+          },
+        },
+        {
+          path: '/api/domains/:domain/:cluster/workflows/:workflowId/:runId',
+          httpMethod: 'GET',
+          mockOnce: false,
+          jsonResponse: {
+            ...mockDescribeWorkflowResponse,
+            workflowExecutionInfo: {
+              ...mockDescribeWorkflowResponse.workflowExecutionInfo,
+              memo: {
+                fields: hasMemo
+                  ? {
+                      [WORKFLOW_CUSTOM_VIEW_MEMO_KEY]: {
+                        data: Buffer.from('true').toString('base64'),
+                      },
+                    }
+                  : {},
+              },
+            },
           },
         },
       ],

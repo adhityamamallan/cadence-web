@@ -111,6 +111,20 @@ describe(StartWorkflowButton.name, () => {
     });
   });
 
+  it('sends the memo in the request body', async () => {
+    const { user, getLatestBody } = setup({
+      propsOverrides: { memo: { cadence_web_custom_view: true } },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Start Workflow' }));
+
+    await waitFor(() =>
+      expect(getLatestBody()).toEqual(
+        expect.objectContaining({ memo: { cadence_web_custom_view: true } })
+      )
+    );
+  });
+
   it('shows a success snackbar with a "View" action that navigates to the new workflow run', async () => {
     const { user } = setup({
       result: { workflowId: 'new-workflow-id', runId: 'new-run-id' },
@@ -166,6 +180,7 @@ function setup({
 }) {
   const user = userEvent.setup();
   let latestRequestPathname: string | undefined;
+  let latestBody: unknown;
 
   render(
     <StartWorkflowButton {...defaultProps} {...propsOverrides} />,
@@ -177,6 +192,7 @@ function setup({
           mockOnce: false,
           httpResolver: async ({ request }) => {
             latestRequestPathname = new URL(request.url).pathname;
+            latestBody = await request.clone().json();
             if (error) {
               return HttpResponse.json(
                 { message: 'Failed to start workflow' },
@@ -201,6 +217,7 @@ function setup({
 
   return {
     user,
+    getLatestBody: () => latestBody,
     getLatestRequest: () => {
       if (!latestRequestPathname) {
         throw new Error('No request was captured yet');

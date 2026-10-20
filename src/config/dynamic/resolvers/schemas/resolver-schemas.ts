@@ -102,6 +102,10 @@ const resolverSchemas: ResolverSchemas = {
     args: z.undefined(),
     returnType: z.boolean(),
   },
+  WORKFLOW_CUSTOM_VIEW_MEMO_REQUIRED: {
+    args: z.undefined(),
+    returnType: z.boolean(),
+  },
   WORKFLOW_CUSTOM_VIEW_ENABLED: {
     args: z.undefined(),
     returnType: z.boolean(),
