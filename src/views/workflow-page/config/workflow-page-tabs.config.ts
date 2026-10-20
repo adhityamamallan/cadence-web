@@ -1,17 +1,19 @@
 import {
-  MdHome,
+  MdListAlt,
   MdOutlineHistory,
   MdOutlineManageSearch,
   MdOutlineTerminal,
+  MdOutlineWidgets,
 } from 'react-icons/md';
 import { RiStethoscopeLine } from 'react-icons/ri';
 
+import WorkflowCustomView from '@/views/workflow-custom-view/workflow-custom-view';
 import getWorkflowDiagnosticsErrorConfig from '@/views/workflow-diagnostics/helpers/get-workflow-diagnostics-error-config';
 import WorkflowDiagnostics from '@/views/workflow-diagnostics/workflow-diagnostics';
 import WorkflowHistoryWrapper from '@/views/workflow-history/workflow-history-wrapper/workflow-history-wrapper';
-import WorkflowHome from '@/views/workflow-home/workflow-home';
 import WorkflowQueries from '@/views/workflow-queries/workflow-queries';
 import WorkflowStackTrace from '@/views/workflow-stack-trace/workflow-stack-trace';
+import WorkflowSummary from '@/views/workflow-summary/workflow-summary';
 
 import getWorkflowPageErrorConfig from '../helpers/get-workflow-page-error-config';
 import WorkflowPageDiagnosticsBadge from '../workflow-page-diagnostics-badge/workflow-page-diagnostics-badge';
@@ -19,17 +21,33 @@ import WorkflowPageHistoryBadges from '../workflow-page-history-badges/workflow-
 import type { WorkflowPageTabsConfig } from '../workflow-page-tabs/workflow-page-tabs.types';
 
 const workflowPageTabsConfig: WorkflowPageTabsConfig<
-  'summary' | 'history' | 'queries' | 'stack-trace' | 'diagnostics'
+  | 'summary'
+  | 'custom-view'
+  | 'history'
+  | 'queries'
+  | 'stack-trace'
+  | 'diagnostics'
 > = {
   summary: {
-    title: 'Home',
-    artwork: MdHome,
-    content: WorkflowHome,
+    title: 'Summary',
+    artwork: MdListAlt,
+    content: WorkflowSummary,
     getErrorConfig: (err) =>
       getWorkflowPageErrorConfig(
         err,
         'Failed to load workflow summary',
         'summary'
+      ),
+  },
+  'custom-view': {
+    title: 'Custom view',
+    artwork: MdOutlineWidgets,
+    content: WorkflowCustomView,
+    getErrorConfig: (err) =>
+      getWorkflowPageErrorConfig(
+        err,
+        'Failed to load custom view',
+        'custom view'
       ),
   },
   history: {

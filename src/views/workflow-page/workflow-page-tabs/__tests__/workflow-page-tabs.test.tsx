@@ -86,6 +86,22 @@ describe('WorkflowPageTabs', () => {
     expect(screen.queryByText('Diagnostics')).toBeNull();
   });
 
+  it('renders the custom view tab when the feature is enabled', async () => {
+    await setup({ enableCustomView: true });
+
+    expect(screen.getByText('Summary')).toBeInTheDocument();
+    expect(screen.getByText('Custom view')).toBeInTheDocument();
+    expect(screen.getByTestId('custom-view-artwork')).toBeInTheDocument();
+  });
+
+  it('hides the custom view tab when the feature is disabled', async () => {
+    await setup({ enableCustomView: false });
+
+    expect(screen.getByText('Summary')).toBeInTheDocument();
+    expect(screen.queryByText('Custom view')).toBeNull();
+    expect(screen.queryByTestId('custom-view-artwork')).toBeNull();
+  });
+
   it('renders tabs buttons correctly', async () => {
     await setup({ enableDiagnostics: false });
 
@@ -153,10 +169,12 @@ async function setup({
   error,
   enableDiagnostics,
   enableDiagnosticsInHistory,
+  enableCustomView,
 }: {
   error?: boolean;
   enableDiagnostics?: boolean;
   enableDiagnosticsInHistory?: boolean;
+  enableCustomView?: boolean;
 }) {
   render(
     <ErrorBoundary
@@ -193,6 +211,11 @@ async function setup({
                 return HttpResponse.json(
                   (enableDiagnosticsInHistory ??
                     false) satisfies GetConfigResponse<'WORKFLOW_DIAGNOSTICS_IN_HISTORY_ENABLED'>
+                );
+              case 'WORKFLOW_CUSTOM_VIEW_ENABLED':
+                return HttpResponse.json(
+                  (enableCustomView ??
+                    false) satisfies GetConfigResponse<'WORKFLOW_CUSTOM_VIEW_ENABLED'>
                 );
               default:
                 return HttpResponse.json(false);

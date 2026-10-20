@@ -8,7 +8,7 @@ export const styled = {
     ({ $theme }: { $theme: Theme }): StyleObject => ({
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-end',
       gap: $theme.sizing.scale600,
       paddingTop: $theme.sizing.scale600,
     })

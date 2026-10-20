@@ -28,8 +28,8 @@ export default function WorkflowPageTabs() {
   const { data: isWorkflowDiagnosticsInHistoryEnabled } =
     useSuspenseConfigValue('WORKFLOW_DIAGNOSTICS_IN_HISTORY_ENABLED');
 
-  const { data: isWorkflowHomeEnabled } = useSuspenseConfigValue(
-    'WORKFLOW_HOME_ENABLED'
+  const { data: isWorkflowCustomViewEnabled } = useSuspenseConfigValue(
+    'WORKFLOW_CUSTOM_VIEW_ENABLED'
   );
 
   const shouldShowDiagnosticsInSeparateTab =
@@ -37,25 +37,22 @@ export default function WorkflowPageTabs() {
 
   const filteredTabsConfig = useMemo(
     () =>
-      shouldShowDiagnosticsInSeparateTab
-        ? workflowPageTabsConfig
-        : omit(workflowPageTabsConfig, 'diagnostics'),
-    [shouldShowDiagnosticsInSeparateTab]
+      omit(workflowPageTabsConfig, [
+        ...(shouldShowDiagnosticsInSeparateTab ? [] : ['diagnostics' as const]),
+        ...(isWorkflowCustomViewEnabled ? [] : ['custom-view' as const]),
+      ]),
+    [shouldShowDiagnosticsInSeparateTab, isWorkflowCustomViewEnabled]
   );
 
   const tabList = useMemo(
     () =>
       Object.entries(filteredTabsConfig).map(([key, tabConfig]) => ({
         key,
-        // The summary tab is titled "Home" only when the home page feature is on
-        title:
-          key === 'summary' && !isWorkflowHomeEnabled
-            ? 'Summary'
-            : tabConfig.title,
+        title: tabConfig.title,
         artwork: tabConfig.artwork,
         endEnhancer: tabConfig.endEnhancer,
       })),
-    [filteredTabsConfig, isWorkflowHomeEnabled]
+    [filteredTabsConfig]
   );
 
   return (
