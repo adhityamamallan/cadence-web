@@ -11,6 +11,7 @@ import formatWorkflowHistoryEvent from '@/utils/data-formatters/format-workflow-
 import { type FormattedHistoryEventForType } from '@/utils/data-formatters/schema/format-history-event-schema';
 import request from '@/utils/request';
 import { type RequestError } from '@/utils/request/request-error';
+import getWorkflowSearchAttributes from '@/views/shared/markdoc-workflow-payload/helpers/get-workflow-search-attributes';
 import getWorkflowIsCompleted from '@/views/workflow-page/helpers/get-workflow-is-completed';
 import { useDescribeWorkflow } from '@/views/workflow-page/hooks/use-describe-workflow';
 import getWorkflowResultJson from '@/views/workflow-summary/helpers/get-workflow-result-json';
@@ -21,7 +22,7 @@ import {
 } from './use-workflow-input-result.types';
 
 /**
- * Loads a workflow's decoded input and result.
+ * Loads a workflow's decoded input, result and search attributes.
  * Uses the same query keys as the workflow summary, so both share the cache.
  */
 export default function useWorkflowInputResult({
@@ -74,6 +75,14 @@ export default function useWorkflowInputResult({
       : undefined;
   }, [closeEvent]);
 
+  const indexedFields =
+    describe.data?.workflowExecutionInfo?.searchAttributes?.indexedFields;
+
+  const searchAttributes = useMemo(
+    () => getWorkflowSearchAttributes(indexedFields),
+    [indexedFields]
+  );
+
   const isRunning =
     !closeEvent ||
     !closeEvent.attributes ||
@@ -82,6 +91,7 @@ export default function useWorkflowInputResult({
   return {
     input,
     result,
+    searchAttributes,
     isRunning,
     isArchived: describe.data?.workflowExecutionInfo?.isArchived ?? false,
     isLoading: history.isLoading || describe.isLoading,

@@ -9,6 +9,7 @@ import losslessJsonStringify from '@/utils/lossless-json-stringify';
 import useWorkflowInputResult from '@/views/shared/hooks/use-workflow-input-result';
 
 import getWorkflowPayloadValue from './helpers/get-workflow-payload-value';
+import getWorkflowSearchAttributeValue from './helpers/get-workflow-search-attribute-value';
 import { MARKDOC_WORKFLOW_PAYLOAD_PLACEHOLDERS as PLACEHOLDERS } from './markdoc-workflow-payload.constants';
 import { overrides, styled } from './markdoc-workflow-payload.styles';
 import { type ContentProps } from './markdoc-workflow-payload.types';
@@ -16,15 +17,25 @@ import { type ContentProps } from './markdoc-workflow-payload.types';
 export default function MarkdocWorkflowPayloadContent({
   kind,
   path,
+  name,
   ...workflowParams
 }: ContentProps) {
-  const { input, result, isRunning, isArchived, isLoading, error } =
-    useWorkflowInputResult(workflowParams);
+  const {
+    input,
+    result,
+    searchAttributes,
+    isRunning,
+    isArchived,
+    isLoading,
+    error,
+  } = useWorkflowInputResult(workflowParams);
 
-  const value = useMemo(
-    () => getWorkflowPayloadValue(kind === 'input' ? input : result, path),
-    [kind, input, result, path]
-  );
+  const value = useMemo(() => {
+    if (kind === 'searchAttributes') {
+      return getWorkflowSearchAttributeValue(searchAttributes, name);
+    }
+    return getWorkflowPayloadValue(kind === 'input' ? input : result, path);
+  }, [kind, input, result, searchAttributes, path, name]);
 
   if (isLoading) {
     return <SectionLoadingIndicator />;
@@ -37,6 +48,14 @@ export default function MarkdocWorkflowPayloadContent({
         error={error}
         omitLogging
       />
+    );
+  }
+
+  if (kind === 'searchAttributes' && isArchived) {
+    return (
+      <styled.Placeholder>
+        {PLACEHOLDERS.archivedSearchAttributes}
+      </styled.Placeholder>
     );
   }
 

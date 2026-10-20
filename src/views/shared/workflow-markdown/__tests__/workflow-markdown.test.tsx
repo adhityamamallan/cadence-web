@@ -19,6 +19,10 @@ describe(WorkflowMarkdown.name, () => {
     expect(WORKFLOW_MARKDOC_TAGS).toHaveProperty('workflows');
     expect(WORKFLOW_MARKDOC_TAGS).toHaveProperty('input');
     expect(WORKFLOW_MARKDOC_TAGS).toHaveProperty('result');
+    expect(WORKFLOW_MARKDOC_TAGS).toHaveProperty('searchAttributes');
+    expect(WORKFLOW_MARKDOC_COMPONENTS).toHaveProperty(
+      'MarkdocWorkflowSearchAttributes'
+    );
     expect(WORKFLOW_MARKDOC_COMPONENTS).toHaveProperty('MarkdocWorkflowsList');
   });
 

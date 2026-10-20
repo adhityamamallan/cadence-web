@@ -21,6 +21,17 @@ describe(useWorkflowInputResult.name, () => {
     );
   });
 
+  it('returns the decoded search attributes', async () => {
+    const { result } = setup({});
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(Object.keys(result.current.searchAttributes ?? {})).toEqual([
+      'BinaryChecksums',
+      'CadenceChangeVersion',
+    ]);
+  });
+
   it('reports a running workflow without a result', async () => {
     const { result } = setup({ isRunning: true });
 

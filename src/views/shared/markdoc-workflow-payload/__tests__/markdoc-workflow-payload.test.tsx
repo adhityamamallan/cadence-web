@@ -6,12 +6,13 @@ import MarkdocWorkflowInput from '../markdoc-workflow-input';
 import MarkdocWorkflowPayload from '../markdoc-workflow-payload';
 import { type TagProps } from '../markdoc-workflow-payload.types';
 import MarkdocWorkflowResult from '../markdoc-workflow-result';
+import MarkdocWorkflowSearchAttributes from '../markdoc-workflow-search-attributes';
 
 jest.mock('../markdoc-workflow-payload-content', () =>
-  jest.fn(({ kind, path, domain, cluster, workflowId, runId }) => (
+  jest.fn(({ kind, path, name, domain, cluster, workflowId, runId }) => (
     <div>
-      Mock content: {kind} {path ?? 'no-path'} {domain} {cluster} {workflowId}{' '}
-      {runId}
+      Mock content: {kind} {path ?? name ?? 'no-path'} {domain} {cluster}{' '}
+      {workflowId} {runId}
     </div>
   ))
 );
@@ -34,6 +35,19 @@ describe(MarkdocWorkflowPayload.name, () => {
     });
     expect(
       screen.getByText('Mock content: result a.b d c w r')
+    ).toBeInTheDocument();
+  });
+
+  it('search attributes wrapper passes the name', () => {
+    setup({
+      Component: MarkdocWorkflowSearchAttributes,
+      props: { name: 'CustomKeywordField' },
+      ctx: context,
+    });
+    expect(
+      screen.getByText(
+        'Mock content: searchAttributes CustomKeywordField d c w r'
+      )
     ).toBeInTheDocument();
   });
 
@@ -72,8 +86,8 @@ function setup({
   props,
   ctx,
 }: {
-  Component: (props: TagProps) => JSX.Element;
-  props: TagProps;
+  Component: (props: TagProps & { name?: string }) => JSX.Element;
+  props: TagProps & { name?: string };
   ctx: Record<string, string>;
 }) {
   render(

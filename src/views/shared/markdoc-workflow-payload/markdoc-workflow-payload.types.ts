@@ -1,4 +1,4 @@
-export type WorkflowPayloadKind = 'input' | 'result';
+export type WorkflowPayloadKind = 'input' | 'result' | 'searchAttributes';
 
 export type TagProps = {
   workflowId?: string;
@@ -8,7 +8,12 @@ export type TagProps = {
   path?: string;
 };
 
+export type SearchAttributesTagProps = Omit<TagProps, 'path'> & {
+  name?: string;
+};
+
 export type Props = TagProps & {
+  name?: string;
   kind: WorkflowPayloadKind;
 };
 
@@ -19,4 +24,5 @@ export type ContentProps = {
   domain: string;
   cluster: string;
   path?: string;
+  name?: string;
 };

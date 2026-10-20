@@ -11,6 +11,7 @@ import { type Props } from './markdoc-workflow-payload.types';
 export default function MarkdocWorkflowPayload({
   kind,
   path,
+  name,
   workflowId: workflowIdProp,
   runId: runIdProp,
   domain: domainProp,
@@ -41,6 +42,7 @@ export default function MarkdocWorkflowPayload({
     <MarkdocWorkflowPayloadContent
       kind={kind}
       path={path}
+      name={name}
       domain={domain}
       cluster={cluster}
       workflowId={workflowId}

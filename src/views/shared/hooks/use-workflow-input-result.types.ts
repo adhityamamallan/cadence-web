@@ -11,6 +11,7 @@ export type UseWorkflowInputResultParams = {
 export type UseWorkflowInputResultReturn = {
   input: PrettyJsonValue;
   result: PrettyJsonValue;
+  searchAttributes: Record<string, PrettyJsonValue> | undefined;
   isRunning: boolean;
   isArchived: boolean;
   isLoading: boolean;

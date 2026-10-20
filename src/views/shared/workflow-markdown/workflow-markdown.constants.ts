@@ -6,8 +6,10 @@ import MarkdocWorkflowInput from '../markdoc-workflow-payload/markdoc-workflow-i
 import {
   workflowInputMarkdocSchema,
   workflowResultMarkdocSchema,
+  workflowSearchAttributesMarkdocSchema,
 } from '../markdoc-workflow-payload/markdoc-workflow-payload.markdoc';
 import MarkdocWorkflowResult from '../markdoc-workflow-payload/markdoc-workflow-result';
+import MarkdocWorkflowSearchAttributes from '../markdoc-workflow-payload/markdoc-workflow-search-attributes';
 import MarkdocWorkflowsList from '../markdoc-workflows-list/markdoc-workflows-list';
 import { workflowsListMarkdocSchema } from '../markdoc-workflows-list/markdoc-workflows-list.markdoc';
 
@@ -15,6 +17,7 @@ export const WORKFLOW_MARKDOC_TAGS: NonNullable<Config['tags']> = {
   workflows: workflowsListMarkdocSchema,
   input: workflowInputMarkdocSchema,
   result: workflowResultMarkdocSchema,
+  searchAttributes: workflowSearchAttributesMarkdocSchema,
 };
 
 export const WORKFLOW_MARKDOC_COMPONENTS: Record<
@@ -24,4 +27,5 @@ export const WORKFLOW_MARKDOC_COMPONENTS: Record<
   MarkdocWorkflowsList,
   MarkdocWorkflowInput,
   MarkdocWorkflowResult,
+  MarkdocWorkflowSearchAttributes,
 };

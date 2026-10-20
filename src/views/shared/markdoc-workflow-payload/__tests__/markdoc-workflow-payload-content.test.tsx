@@ -20,6 +20,10 @@ jest.mock('@/components/error-panel/error-panel', () =>
 const baseState = {
   input: [{ order: { id: 7, items: ['a', 'b'] } }] as never,
   result: 'done' as never,
+  searchAttributes: {
+    CustomKeywordField: 'pending',
+    CustomDoubleField: 12.5,
+  } as never,
   isRunning: false,
   isArchived: false,
   isLoading: false,
@@ -62,6 +66,61 @@ describe(MarkdocWorkflowPayloadContent.name, () => {
   it('shows that the result of an archived workflow is in history', () => {
     setup({ kind: 'result', state: { isArchived: true } });
     expect(screen.getByText(/archived/)).toBeInTheDocument();
+  });
+
+  it('renders all search attributes as JSON', () => {
+    setup({ kind: 'searchAttributes' });
+    expect(screen.getByText(/Mock JSON:/)).toBeInTheDocument();
+    expect(screen.getByText(/CustomKeywordField/)).toBeInTheDocument();
+  });
+
+  it('renders one search attribute by name as text', () => {
+    mockHook.mockReturnValue(baseState);
+    render(
+      <MarkdocWorkflowPayloadContent
+        {...props}
+        kind="searchAttributes"
+        name="CustomKeywordField"
+      />
+    );
+    expect(screen.getByText('pending')).toBeInTheDocument();
+  });
+
+  it('shows a placeholder when the named search attribute is missing', () => {
+    mockHook.mockReturnValue(baseState);
+    render(
+      <MarkdocWorkflowPayloadContent
+        {...props}
+        kind="searchAttributes"
+        name="Nope"
+      />
+    );
+    expect(screen.getByText('No value')).toBeInTheDocument();
+  });
+
+  it('shows a placeholder when there are no search attributes', () => {
+    setup({
+      kind: 'searchAttributes',
+      state: { searchAttributes: undefined },
+    });
+    expect(screen.getByText('No value')).toBeInTheDocument();
+  });
+
+  it('shows that search attributes are not available for archived workflows', () => {
+    setup({ kind: 'searchAttributes', state: { isArchived: true } });
+    expect(
+      screen.getByText(
+        'Search attributes are not available for archived workflows'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('shows search attributes of a running workflow', () => {
+    setup({ kind: 'searchAttributes', state: { isRunning: true } });
+    expect(screen.getByText(/Mock JSON:/)).toBeInTheDocument();
+    expect(
+      screen.queryByText('Workflow is still running')
+    ).not.toBeInTheDocument();
   });
 
   it('shows an error message when loading fails', () => {
