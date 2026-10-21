@@ -1,6 +1,5 @@
 import { type RequestError } from '@/utils/request/request-error';
 
-import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '../../workflow-custom-view.constants';
 import getWorkflowCustomViewContent from '../get-workflow-custom-view-content';
 
 const markdownResponse = {
@@ -21,33 +20,29 @@ describe(getWorkflowCustomViewContent.name, () => {
     expect(setup({ isArchived: true })).toEqual({ mode: 'archived' });
   });
 
-  it('returns loading while query types load', () => {
-    expect(setup({ queryTypes: { isLoading: true } })).toEqual({
-      mode: 'loading',
-    });
-  });
-
-  it('returns an error when query types fail', () => {
+  it('returns not-set-up when the error lists the known query types', () => {
     expect(
       setup({
-        queryTypes: { error: { message: 'boom' } as RequestError },
+        customViewQuery: {
+          error: {
+            message:
+              'unknown queryType cadence_web_custom_view. KnownQueryTypes=[__stack_trace other]',
+          } as RequestError,
+        },
       })
-    ).toEqual({ mode: 'error', description: 'boom' });
+    ).toEqual({ mode: 'not-set-up' });
   });
 
-  it('returns not-set-up when the workflow has no custom view query', () => {
-    expect(setup({ queryTypes: { data: { queryTypes: ['other'] } } })).toEqual({
-      mode: 'not-set-up',
-    });
-  });
-
-  it('skips the query types checks when the memo is set', () => {
+  it('returns not-set-up when the known query types list is empty', () => {
     expect(
       setup({
-        hasMemo: true,
-        queryTypes: { error: { message: 'boom' } as RequestError },
+        customViewQuery: {
+          error: {
+            message: 'unknown queryType. KnownQueryTypes=[]',
+          } as RequestError,
+        },
       })
-    ).toEqual({ mode: 'ready', markdown: '# Hello' });
+    ).toEqual({ mode: 'not-set-up' });
   });
 
   it('returns loading while the custom view query loads', () => {
@@ -137,8 +132,6 @@ function setup(
   return getWorkflowCustomViewContent({
     isEnabled: true,
     isArchived: false,
-    hasMemo: false,
-    queryTypes: { data: { queryTypes: [WORKFLOW_CUSTOM_VIEW_QUERY_NAME] } },
     customViewQuery: { data: markdownResponse },
     ...overrides,
   });

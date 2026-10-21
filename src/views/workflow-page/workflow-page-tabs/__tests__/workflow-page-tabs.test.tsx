@@ -2,11 +2,13 @@ import React, { Suspense } from 'react';
 
 import { HttpResponse } from 'msw';
 
-import { render, screen, act, fireEvent } from '@/test-utils/rtl';
+import { render, screen, act, fireEvent, waitFor } from '@/test-utils/rtl';
 
 import ErrorBoundary from '@/components/error-boundary/error-boundary';
 import { type GetConfigResponse } from '@/route-handlers/get-config/get-config.types';
+import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '@/views/workflow-custom-view/workflow-custom-view.constants';
 
+import { mockDescribeWorkflowResponse } from '../../__fixtures__/describe-workflow-response';
 import { mockWorkflowPageTabsConfig } from '../../__fixtures__/workflow-page-tabs-config';
 import WorkflowPageTabs from '../workflow-page-tabs';
 
@@ -102,6 +104,57 @@ describe('WorkflowPageTabs', () => {
     expect(screen.queryByTestId('custom-view-artwork')).toBeNull();
   });
 
+  it('shows the title from the page frontmatter as the custom view tab name', async () => {
+    await setup({
+      enableCustomView: true,
+      customViewMarkdown: '---\ntitle: Expense 1\n---\n# Hi',
+    });
+
+    expect(await screen.findByText('Expense 1')).toBeInTheDocument();
+    expect(screen.queryByText('Custom view')).toBeNull();
+  });
+
+  it('keeps the default custom view tab name without a frontmatter title', async () => {
+    const { getCustomViewQueryCalls } = await setup({
+      enableCustomView: true,
+      customViewMarkdown: '# Hi',
+    });
+
+    await waitFor(() => expect(getCustomViewQueryCalls()).toBe(1));
+    expect(screen.getByText('Custom view')).toBeInTheDocument();
+  });
+
+  it('keeps the default custom view tab name when the query fails', async () => {
+    const { getCustomViewQueryCalls } = await setup({
+      enableCustomView: true,
+    });
+
+    await waitFor(() => expect(getCustomViewQueryCalls()).toBe(1));
+    expect(screen.getByText('Custom view')).toBeInTheDocument();
+  });
+
+  it('does not run the custom view query when the feature is disabled', async () => {
+    const { getCustomViewQueryCalls } = await setup({
+      enableCustomView: false,
+      customViewMarkdown: '---\ntitle: Expense 1\n---\n# Hi',
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(getCustomViewQueryCalls()).toBe(0);
+  });
+
+  it('does not run the custom view query for archived workflows', async () => {
+    const { getCustomViewQueryCalls } = await setup({
+      enableCustomView: true,
+      archived: true,
+      customViewMarkdown: '# Hi',
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(getCustomViewQueryCalls()).toBe(0);
+    expect(screen.getByText('Custom view')).toBeInTheDocument();
+  });
+
   it('renders tabs buttons correctly', async () => {
     await setup({ enableDiagnostics: false });
 
@@ -170,12 +223,17 @@ async function setup({
   enableDiagnostics,
   enableDiagnosticsInHistory,
   enableCustomView,
+  customViewMarkdown,
+  archived,
 }: {
   error?: boolean;
   enableDiagnostics?: boolean;
   enableDiagnosticsInHistory?: boolean;
   enableCustomView?: boolean;
+  customViewMarkdown?: string;
+  archived?: boolean;
 }) {
+  let customViewQueryCalls = 0;
   render(
     <ErrorBoundary
       fallbackRender={({ error }) => <div>Error: {error.message}</div>}
@@ -186,6 +244,37 @@ async function setup({
     </ErrorBoundary>,
     {
       endpointsMocks: [
+        {
+          path: '/api/domains/:domain/:cluster/workflows/:workflowId/:runId',
+          httpMethod: 'GET',
+          mockOnce: false,
+          jsonResponse: {
+            ...mockDescribeWorkflowResponse,
+            workflowExecutionInfo: {
+              ...mockDescribeWorkflowResponse.workflowExecutionInfo,
+              isArchived: archived ?? false,
+            },
+          },
+        },
+        {
+          path: `/api/domains/:domain/:cluster/workflows/:workflowId/:runId/query/${WORKFLOW_CUSTOM_VIEW_QUERY_NAME}`,
+          httpMethod: 'POST',
+          mockOnce: false,
+          httpResolver: async () => {
+            customViewQueryCalls++;
+            if (customViewMarkdown === undefined) {
+              return HttpResponse.json({ message: 'nope' }, { status: 500 });
+            }
+            return HttpResponse.json({
+              result: {
+                cadenceResponseType: 'formattedData',
+                format: 'text/markdown',
+                data: customViewMarkdown,
+              },
+              rejected: null,
+            });
+          },
+        },
         {
           path: '/api/config',
           httpMethod: 'GET',
@@ -230,4 +319,6 @@ async function setup({
     // Wait for the first tab to load
     await screen.findByText('Summary');
   }
+
+  return { getCustomViewQueryCalls: () => customViewQueryCalls };
 }

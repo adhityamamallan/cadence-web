@@ -6,17 +6,8 @@ import WorkflowCustomViewHeader from '../workflow-custom-view-header';
 import { type Props } from '../workflow-custom-view-header.types';
 
 describe(WorkflowCustomViewHeader.name, () => {
-  it('renders the title as a heading when set', () => {
-    setup({ title: 'Expense report 1' });
-    expect(
-      screen.getByRole('heading', { level: 2, name: 'Expense report 1' })
-    ).toBeInTheDocument();
-    expect(screen.getByText('Refresh')).toBeInTheDocument();
-  });
-
-  it('renders no heading when there is no title', () => {
+  it('renders the Refresh button', () => {
     setup({});
-    expect(screen.queryByRole('heading')).toBeNull();
     expect(screen.getByText('Refresh')).toBeInTheDocument();
   });
 

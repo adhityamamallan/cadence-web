@@ -7,10 +7,7 @@ import { render, screen, userEvent, waitFor } from '@/test-utils/rtl';
 import { mockDescribeWorkflowResponse } from '@/views/workflow-page/__fixtures__/describe-workflow-response';
 
 import WorkflowCustomView from '../workflow-custom-view';
-import {
-  WORKFLOW_CUSTOM_VIEW_MEMO_KEY,
-  WORKFLOW_CUSTOM_VIEW_QUERY_NAME,
-} from '../workflow-custom-view.constants';
+import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '../workflow-custom-view.constants';
 
 jest.mock('@/components/error-panel/error-panel', () =>
   jest.fn(({ message, description, actions }) => (
@@ -73,28 +70,10 @@ describe(WorkflowCustomView.name, () => {
     expect(screen.getByText('Refresh')).toBeInTheDocument();
   });
 
-  it('renders the frontmatter title as a heading', async () => {
-    await setup({ markdown: '---\ntitle: My page\n---\n# Custom view' });
-    expect(
-      await screen.findByRole('heading', { level: 2, name: 'My page' })
-    ).toBeInTheDocument();
-  });
-
-  it('renders the empty state when there is no custom view query', async () => {
-    await setup({ queryTypes: ['other'] });
+  it('renders the empty state when the error lists the known query types', async () => {
+    await setup({ notSetUp: true });
     expect(await screen.findByText('Mock Empty')).toBeInTheDocument();
     expect(screen.queryByText('Refresh')).toBeNull();
-  });
-
-  it('skips the query types request when the memo is set', async () => {
-    const { getQueryTypesCalls } = await setup({
-      hasMemo: true,
-      queryTypes: [],
-    });
-    expect(
-      await screen.findByText('Mock Markdown: # Custom view')
-    ).toBeInTheDocument();
-    expect(getQueryTypesCalls()).toBe(0);
   });
 
   it('renders the error state when the query fails', async () => {
@@ -104,14 +83,7 @@ describe(WorkflowCustomView.name, () => {
     ).toBeInTheDocument();
   });
 
-  it('renders the error state when the query types fail', async () => {
-    await setup({ queryTypesError: true });
-    expect(
-      await screen.findByText('Mock ErrorPanel: Could not load the custom view')
-    ).toBeInTheDocument();
-  });
-
-  it('refetches the queries when Retry is clicked', async () => {
+  it('refetches the custom view query when Retry is clicked', async () => {
     const { user, getCustomViewQueryCalls } = await setup({
       queryError: true,
     });
@@ -172,30 +144,25 @@ describe(WorkflowCustomView.name, () => {
 
 async function setup({
   enabled = true,
-  queryTypes = [WORKFLOW_CUSTOM_VIEW_QUERY_NAME],
   queryError,
-  queryTypesError,
+  notSetUp,
   archived,
   nonMarkdown,
   markdown = '# Custom view',
   isRunning = false,
   refreshIntervalMs = 0,
-  hasMemo = false,
 }: {
   enabled?: boolean;
-  queryTypes?: string[];
   queryError?: boolean;
-  queryTypesError?: boolean;
+  notSetUp?: boolean;
   archived?: boolean;
   nonMarkdown?: boolean;
   markdown?: string;
   isRunning?: boolean;
   refreshIntervalMs?: number;
-  hasMemo?: boolean;
 }) {
   const user = userEvent.setup();
   let customViewQueryCalls = 0;
-  let queryTypesCalls = 0;
 
   render(
     <Suspense fallback={<div>Loading...</div>}>
@@ -221,49 +188,24 @@ async function setup({
           path: '/api/domains/:domain/:cluster/workflows/:workflowId/:runId',
           httpMethod: 'GET',
           mockOnce: false,
-          jsonResponse: hasMemo
+          jsonResponse: isRunning
             ? {
                 ...mockDescribeWorkflowResponse,
                 workflowExecutionInfo: {
                   ...mockDescribeWorkflowResponse.workflowExecutionInfo,
-                  memo: {
-                    fields: {
-                      [WORKFLOW_CUSTOM_VIEW_MEMO_KEY]: {
-                        data: Buffer.from('true').toString('base64'),
-                      },
-                    },
-                  },
+                  closeStatus: null,
+                  closeEvent: null,
                 },
               }
-            : isRunning
+            : archived
               ? {
                   ...mockDescribeWorkflowResponse,
                   workflowExecutionInfo: {
                     ...mockDescribeWorkflowResponse.workflowExecutionInfo,
-                    closeStatus: null,
-                    closeEvent: null,
+                    isArchived: true,
                   },
                 }
-              : archived
-                ? {
-                    ...mockDescribeWorkflowResponse,
-                    workflowExecutionInfo: {
-                      ...mockDescribeWorkflowResponse.workflowExecutionInfo,
-                      isArchived: true,
-                    },
-                  }
-                : mockDescribeWorkflowResponse,
-        },
-        {
-          path: '/api/domains/:domain/:cluster/workflows/:workflowId/:runId/query',
-          httpMethod: 'GET',
-          mockOnce: false,
-          httpResolver: async () => {
-            queryTypesCalls++;
-            return queryTypesError
-              ? HttpResponse.json({ message: 'nope' }, { status: 500 })
-              : HttpResponse.json({ queryTypes });
-          },
+              : mockDescribeWorkflowResponse,
         },
         {
           path: `/api/domains/:domain/:cluster/workflows/:workflowId/:runId/query/${WORKFLOW_CUSTOM_VIEW_QUERY_NAME}`,
@@ -271,6 +213,15 @@ async function setup({
           mockOnce: false,
           httpResolver: async () => {
             customViewQueryCalls++;
+            if (notSetUp) {
+              return HttpResponse.json(
+                {
+                  message:
+                    'unknown queryType. KnownQueryTypes=[__stack_trace other]',
+                },
+                { status: 500 }
+              );
+            }
             if (queryError) {
               return HttpResponse.json({ message: 'nope' }, { status: 500 });
             }
@@ -293,6 +244,5 @@ async function setup({
   return {
     user,
     getCustomViewQueryCalls: () => customViewQueryCalls,
-    getQueryTypesCalls: () => queryTypesCalls,
   };
 }

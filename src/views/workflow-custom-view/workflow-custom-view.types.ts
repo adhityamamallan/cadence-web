@@ -10,3 +10,9 @@ export type WorkflowCustomViewContent =
 export type CustomViewFrontmatter = {
   title?: string;
 };
+
+export type MarkdownQueryResult = {
+  cadenceResponseType: 'formattedData';
+  format: 'text/markdown';
+  data: string;
+};

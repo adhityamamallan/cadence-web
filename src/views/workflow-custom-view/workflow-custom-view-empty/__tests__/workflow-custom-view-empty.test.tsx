@@ -38,23 +38,6 @@ describe(WorkflowCustomViewEmpty.name, () => {
     ).toBeInTheDocument();
   });
 
-  it('renders the memo snippet with a copy button', () => {
-    setup();
-    expect(
-      screen.getByText(/StartWorkflowOptions/, { selector: 'pre' })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Copy: client\.StartWorkflowOptions/)
-    ).toBeInTheDocument();
-  });
-
-  it('says the memo is optional', () => {
-    setup();
-    expect(
-      screen.getByText(/^Optional: set this memo when you start the workflow/)
-    ).toBeInTheDocument();
-  });
-
   it('links to the Markdoc guide', () => {
     setup();
     expect(screen.getByText('Markdoc guide')).toHaveAttribute('href', '/docs');

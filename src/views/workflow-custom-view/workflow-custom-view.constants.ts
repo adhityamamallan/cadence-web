@@ -21,16 +21,3 @@ export const WORKFLOW_CUSTOM_VIEW_GO_SNIPPET = `workflow.SetQueryHandler(ctx, "$
         "data":                "## Hello from my workflow",
     }, nil
 })`;
-
-// Contract with workflow starters: a memo with this key set to true marks a workflow as having a custom view.
-export const WORKFLOW_CUSTOM_VIEW_MEMO_KEY = WORKFLOW_CUSTOM_VIEW_QUERY_NAME;
-
-export const WORKFLOW_CUSTOM_VIEW_MEMO_TEXTS = {
-  optional:
-    'Optional: set this memo when you start the workflow, so the view loads faster.',
-} as const;
-
-export const WORKFLOW_CUSTOM_VIEW_MEMO_GO_SNIPPET = `client.StartWorkflowOptions{
-    // ...
-    Memo: map[string]interface{}{"${WORKFLOW_CUSTOM_VIEW_MEMO_KEY}": true},
-}`;

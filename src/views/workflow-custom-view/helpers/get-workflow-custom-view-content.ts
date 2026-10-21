@@ -1,4 +1,4 @@
-import { type FetchWorkflowQueryTypesResponse } from '@/route-handlers/fetch-workflow-query-types/fetch-workflow-query-types.types';
+import parseErrorMessageForQueryTypes from '@/route-handlers/fetch-workflow-query-types/helpers/parse-error-message-for-query-types';
 import { type QueryWorkflowResponse } from '@/route-handlers/query-workflow/query-workflow.types';
 import { type RequestError } from '@/utils/request/request-error';
 
@@ -6,25 +6,20 @@ import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '../workflow-custom-view.constan
 import { type WorkflowCustomViewContent } from '../workflow-custom-view.types';
 
 import getCustomViewFrontmatter from './get-custom-view-frontmatter';
-
-type QueryState<T> = {
-  data?: T;
-  error?: RequestError | null;
-  isLoading?: boolean;
-};
+import isMarkdownQueryResult from './is-markdown-query-result';
 
 export default function getWorkflowCustomViewContent({
   isEnabled,
   isArchived,
-  hasMemo,
-  queryTypes,
   customViewQuery,
 }: {
   isEnabled: boolean;
   isArchived: boolean;
-  hasMemo: boolean;
-  queryTypes: QueryState<FetchWorkflowQueryTypesResponse>;
-  customViewQuery: QueryState<QueryWorkflowResponse>;
+  customViewQuery: {
+    data?: QueryWorkflowResponse;
+    error?: RequestError | null;
+    isLoading?: boolean;
+  };
 }): WorkflowCustomViewContent {
   if (!isEnabled) {
     return { mode: 'disabled' };
@@ -34,25 +29,12 @@ export default function getWorkflowCustomViewContent({
     return { mode: 'archived' };
   }
 
-  // The memo replaces the query types check
-  if (!hasMemo) {
-    if (queryTypes.isLoading) {
-      return { mode: 'loading' };
-    }
-
-    if (queryTypes.error) {
-      return { mode: 'error', description: queryTypes.error.message };
-    }
-
-    if (
-      !queryTypes.data?.queryTypes.includes(WORKFLOW_CUSTOM_VIEW_QUERY_NAME)
-    ) {
-      return { mode: 'not-set-up' };
-    }
-  }
-
   // A failed background refetch keeps showing the last good page
   if (customViewQuery.error && !customViewQuery.data) {
+    // A workflow without the query handler lists its known query types in the error
+    if (parseErrorMessageForQueryTypes(customViewQuery.error.message)) {
+      return { mode: 'not-set-up' };
+    }
     return { mode: 'error', description: customViewQuery.error.message };
   }
 
@@ -69,10 +51,7 @@ export default function getWorkflowCustomViewContent({
     };
   }
 
-  if (
-    data.result?.cadenceResponseType === 'formattedData' &&
-    data.result?.format === 'text/markdown'
-  ) {
+  if (isMarkdownQueryResult(data.result)) {
     const { title } = getCustomViewFrontmatter(data.result.data);
     return { mode: 'ready', markdown: data.result.data, title };
   }

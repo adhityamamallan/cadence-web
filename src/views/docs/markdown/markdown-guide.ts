@@ -15,16 +15,16 @@ Markdoc is a markdown parser and renderer that is used to safely render the mark
 ## Page Frontmatter
 
 A custom view page can start with frontmatter to set a title.
-The title shows as a heading at the top of the Custom view tab.
+The title is the name of the Custom view tab.
 
 \`\`\`
 ---
-title: Expense report EXP-1001
+title: Expense EXP-1001
 ---
 ## Details
 \`\`\`
 
-- \`title\` (string, optional) -- heading shown above the page, not part of the rendered content
+- \`title\` (string, optional) -- name of the Custom view tab, not part of the rendered content
 
 
 ## Signal Workflow

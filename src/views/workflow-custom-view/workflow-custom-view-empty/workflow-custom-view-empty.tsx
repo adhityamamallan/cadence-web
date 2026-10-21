@@ -7,8 +7,6 @@ import ErrorPanel from '@/components/error-panel/error-panel';
 import {
   WORKFLOW_CUSTOM_VIEW_EMPTY_DESCRIPTION,
   WORKFLOW_CUSTOM_VIEW_GO_SNIPPET,
-  WORKFLOW_CUSTOM_VIEW_MEMO_GO_SNIPPET,
-  WORKFLOW_CUSTOM_VIEW_MEMO_TEXTS,
   WORKFLOW_CUSTOM_VIEW_MESSAGES,
 } from '../workflow-custom-view.constants';
 
@@ -26,15 +24,6 @@ export default function WorkflowCustomViewEmpty() {
             <styled.Code>{WORKFLOW_CUSTOM_VIEW_GO_SNIPPET}</styled.Code>
             <styled.CopyButtonContainer>
               <CopyTextButton textToCopy={WORKFLOW_CUSTOM_VIEW_GO_SNIPPET} />
-            </styled.CopyButtonContainer>
-          </styled.Snippet>
-          <span>{WORKFLOW_CUSTOM_VIEW_MEMO_TEXTS.optional}</span>
-          <styled.Snippet>
-            <styled.Code>{WORKFLOW_CUSTOM_VIEW_MEMO_GO_SNIPPET}</styled.Code>
-            <styled.CopyButtonContainer>
-              <CopyTextButton
-                textToCopy={WORKFLOW_CUSTOM_VIEW_MEMO_GO_SNIPPET}
-              />
             </styled.CopyButtonContainer>
           </styled.Snippet>
         </styled.Description>
