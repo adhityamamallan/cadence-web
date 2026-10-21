@@ -125,6 +125,49 @@ describe(StartWorkflowButton.name, () => {
     );
   });
 
+  it('sends the field value in the workflow input', async () => {
+    const { user, getLatestBody } = setup({
+      propsOverrides: {
+        input: { items: [{ amount: 0, name: 'Lunch' }] },
+        fields: { 'items[0].amount': 'newAmount' },
+      },
+      contextValue: {
+        fieldValues: { newAmount: '84.5' },
+        fieldMeta: { newAmount: { type: 'number', required: true } },
+      },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Start Workflow' }));
+
+    await waitFor(() =>
+      expect(getLatestBody()).toEqual(
+        expect.objectContaining({
+          input: [{ items: [{ amount: 84.5, name: 'Lunch' }] }],
+        })
+      )
+    );
+  });
+
+  it('disables the button while a required field is empty', () => {
+    setup({
+      propsOverrides: {
+        input: { amount: 0 },
+        fields: { amount: 'newAmount' },
+      },
+      contextValue: {
+        fieldValues: {},
+        fieldMeta: { newAmount: { type: 'number', required: true } },
+      },
+    });
+
+    const button = screen.getByRole('button', { name: 'Start Workflow' });
+    expect(button).toHaveAttribute('disabled');
+    expect(button).toHaveAttribute(
+      'title',
+      'Fill in required fields: newAmount'
+    );
+  });
+
   it('shows a success snackbar with a "View" action that navigates to the new workflow run', async () => {
     const { user } = setup({
       result: { workflowId: 'new-workflow-id', runId: 'new-run-id' },

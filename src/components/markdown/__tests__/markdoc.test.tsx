@@ -29,6 +29,18 @@ describe('Markdown with Markdoc', () => {
     expect(screen.queryByText(/Hidden title/)).toBeNull();
   });
 
+  it('renders a field tag as an input', () => {
+    render(
+      <Markdown
+        markdown={
+          '{% field name="amount" label="Amount" type="number" default=84.5 /%}'
+        }
+      />
+    );
+
+    expect(screen.getByLabelText('Amount')).toHaveValue(84.5);
+  });
+
   it('renders basic markdown', () => {
     const content = '# Hello World\n\nThis is a test.';
     render(<Markdown markdown={content} />);
@@ -185,6 +197,8 @@ Use \`code\` here.`;
         cluster: 'cluster0',
         workflowId: 'wf-123',
         runId: 'run-456',
+        fieldValues: {},
+        fieldMeta: {},
       })
     );
   });
