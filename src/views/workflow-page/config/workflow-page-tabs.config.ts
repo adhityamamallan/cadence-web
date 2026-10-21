@@ -16,6 +16,7 @@ import WorkflowStackTrace from '@/views/workflow-stack-trace/workflow-stack-trac
 import WorkflowSummary from '@/views/workflow-summary/workflow-summary';
 
 import getWorkflowPageErrorConfig from '../helpers/get-workflow-page-error-config';
+import WorkflowPageCustomViewBadge from '../workflow-page-custom-view-badge/workflow-page-custom-view-badge';
 import WorkflowPageDiagnosticsBadge from '../workflow-page-diagnostics-badge/workflow-page-diagnostics-badge';
 import WorkflowPageHistoryBadges from '../workflow-page-history-badges/workflow-page-history-badges';
 import type { WorkflowPageTabsConfig } from '../workflow-page-tabs/workflow-page-tabs.types';
@@ -41,6 +42,7 @@ const workflowPageTabsConfig: WorkflowPageTabsConfig<
   },
   'custom-view': {
     title: 'Custom view',
+    endEnhancer: WorkflowPageCustomViewBadge,
     artwork: MdOutlineWidgets,
     content: WorkflowCustomView,
     getErrorConfig: (err) =>

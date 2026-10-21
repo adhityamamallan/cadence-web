@@ -9,11 +9,9 @@ import PageTabs from '@/components/page-tabs/page-tabs';
 import useSuspenseConfigValue from '@/hooks/use-config-value/use-suspense-config-value';
 import decodeUrlParams from '@/utils/decode-url-params';
 import WorkflowActions from '@/views/workflow-actions/workflow-actions';
-import getCustomViewTabTitle from '@/views/workflow-custom-view/helpers/get-custom-view-tab-title';
-import useWorkflowCustomViewQuery from '@/views/workflow-custom-view/hooks/use-workflow-custom-view-query';
+import useWorkflowCustomViewTabTitle from '@/views/workflow-custom-view/hooks/use-workflow-custom-view-tab-title';
 
 import workflowPageTabsConfig from '../config/workflow-page-tabs.config';
-import { useDescribeWorkflow } from '../hooks/use-describe-workflow';
 import WorkflowPageCliCommandsButton from '../workflow-page-cli-commands-button/workflow-page-cli-commands-button';
 
 import { styled } from './workflow-page-tabs.styles';
@@ -35,28 +33,12 @@ export default function WorkflowPageTabs() {
     'WORKFLOW_CUSTOM_VIEW_ENABLED'
   );
 
-  // Shares the cache with the describe query of the page
-  const { data: workflowDetails } = useDescribeWorkflow({
+  const customViewTitle = useWorkflowCustomViewTabTitle({
     domain: decodedParams.domain,
     cluster: decodedParams.cluster,
     workflowId: decodedParams.workflowId,
     runId: decodedParams.runId,
-    enabled: isWorkflowCustomViewEnabled,
   });
-  const isArchived =
-    workflowDetails?.workflowExecutionInfo?.isArchived ?? false;
-
-  // The tab title comes from the frontmatter of the page, so the query runs on page load
-  const { data: customViewData } = useWorkflowCustomViewQuery(
-    {
-      domain: decodedParams.domain,
-      cluster: decodedParams.cluster,
-      workflowId: decodedParams.workflowId,
-      runId: decodedParams.runId,
-    },
-    { enabled: isWorkflowCustomViewEnabled && !!workflowDetails && !isArchived }
-  );
-  const customViewTitle = getCustomViewTabTitle(customViewData);
 
   const shouldShowDiagnosticsInSeparateTab =
     isWorkflowDiagnosticsEnabled && !isWorkflowDiagnosticsInHistoryEnabled;
