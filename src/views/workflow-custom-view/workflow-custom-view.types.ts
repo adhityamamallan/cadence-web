@@ -5,4 +5,8 @@ export type WorkflowCustomViewContent =
   | { mode: 'not-set-up' }
   | { mode: 'error'; description: string }
   | { mode: 'invalid-format'; description: string }
-  | { mode: 'ready'; markdown: string };
+  | { mode: 'ready'; markdown: string; title?: string };
+
+export type CustomViewFrontmatter = {
+  title?: string;
+};

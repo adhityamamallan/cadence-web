@@ -22,6 +22,13 @@ jest.mock(
 );
 
 describe('Markdown with Markdoc', () => {
+  it('does not render the frontmatter', () => {
+    render(<Markdown markdown={'---\ntitle: Hidden title\n---\n# Body'} />);
+
+    expect(screen.getByText('Body')).toBeInTheDocument();
+    expect(screen.queryByText(/Hidden title/)).toBeNull();
+  });
+
   it('renders basic markdown', () => {
     const content = '# Hello World\n\nThis is a test.';
     render(<Markdown markdown={content} />);

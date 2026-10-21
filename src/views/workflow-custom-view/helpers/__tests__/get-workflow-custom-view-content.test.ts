@@ -115,6 +115,20 @@ describe(getWorkflowCustomViewContent.name, () => {
   it('returns ready with the markdown', () => {
     expect(setup({})).toEqual({ mode: 'ready', markdown: '# Hello' });
   });
+
+  it('returns ready with the title from the frontmatter', () => {
+    const markdown = '---\ntitle: My page\n---\n# Hello';
+    expect(
+      setup({
+        customViewQuery: {
+          data: {
+            ...markdownResponse,
+            result: { ...markdownResponse.result, data: markdown },
+          },
+        },
+      })
+    ).toEqual({ mode: 'ready', markdown, title: 'My page' });
+  });
 });
 
 function setup(

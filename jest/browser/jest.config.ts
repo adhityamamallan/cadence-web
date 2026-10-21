@@ -12,6 +12,7 @@ const esModules = [
   'split-on-first',
   'filter-obj',
   'react-movable',
+  'yaml',
 ];
 
 const createJestConfig = nextJest({

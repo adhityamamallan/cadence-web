@@ -73,6 +73,13 @@ describe(WorkflowCustomView.name, () => {
     expect(screen.getByText('Refresh')).toBeInTheDocument();
   });
 
+  it('renders the frontmatter title as a heading', async () => {
+    await setup({ markdown: '---\ntitle: My page\n---\n# Custom view' });
+    expect(
+      await screen.findByRole('heading', { level: 2, name: 'My page' })
+    ).toBeInTheDocument();
+  });
+
   it('renders the empty state when there is no custom view query', async () => {
     await setup({ queryTypes: ['other'] });
     expect(await screen.findByText('Mock Empty')).toBeInTheDocument();
@@ -170,6 +177,7 @@ async function setup({
   queryTypesError,
   archived,
   nonMarkdown,
+  markdown = '# Custom view',
   isRunning = false,
   refreshIntervalMs = 0,
   hasMemo = false,
@@ -180,6 +188,7 @@ async function setup({
   queryTypesError?: boolean;
   archived?: boolean;
   nonMarkdown?: boolean;
+  markdown?: string;
   isRunning?: boolean;
   refreshIntervalMs?: number;
   hasMemo?: boolean;
@@ -271,7 +280,7 @@ async function setup({
                 : {
                     cadenceResponseType: 'formattedData',
                     format: 'text/markdown',
-                    data: '# Custom view',
+                    data: markdown,
                   },
               rejected: null,
             });

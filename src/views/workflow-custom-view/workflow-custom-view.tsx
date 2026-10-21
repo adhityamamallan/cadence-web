@@ -191,6 +191,7 @@ export default function WorkflowCustomView({
         <>
           <PageSection>
             <WorkflowCustomViewHeader
+              title={content.title}
               onRefresh={handleRefresh}
               isRefreshing={isManualRefresh}
             />

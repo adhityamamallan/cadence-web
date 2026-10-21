@@ -8,11 +8,13 @@ import { overrides, styled } from './workflow-custom-view-header.styles';
 import { type Props } from './workflow-custom-view-header.types';
 
 export default function WorkflowCustomViewHeader({
+  title,
   onRefresh,
   isRefreshing,
 }: Props) {
   return (
     <styled.Header>
+      {title ? <styled.Title>{title}</styled.Title> : <styled.Spacer />}
       <Button
         size="compact"
         kind="secondary"

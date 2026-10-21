@@ -12,6 +12,21 @@ Cadence markdown support is implemented using [Markdoc](https://markdoc.io/).
 Markdoc is a markdown parser and renderer that is used to safely render the markdown content.
 
 
+## Page Frontmatter
+
+A custom view page can start with frontmatter to set a title.
+The title shows as a heading at the top of the Custom view tab.
+
+\`\`\`
+---
+title: Expense report EXP-1001
+---
+## Details
+\`\`\`
+
+- \`title\` (string, optional) -- heading shown above the page, not part of the rendered content
+
+
 ## Signal Workflow
 
 Send a signal to a running workflow using the \`signal\` tag.

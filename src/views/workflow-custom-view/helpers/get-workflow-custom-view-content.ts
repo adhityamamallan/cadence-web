@@ -5,6 +5,8 @@ import { type RequestError } from '@/utils/request/request-error';
 import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '../workflow-custom-view.constants';
 import { type WorkflowCustomViewContent } from '../workflow-custom-view.types';
 
+import getCustomViewFrontmatter from './get-custom-view-frontmatter';
+
 type QueryState<T> = {
   data?: T;
   error?: RequestError | null;
@@ -71,7 +73,8 @@ export default function getWorkflowCustomViewContent({
     data.result?.cadenceResponseType === 'formattedData' &&
     data.result?.format === 'text/markdown'
   ) {
-    return { mode: 'ready', markdown: data.result.data };
+    const { title } = getCustomViewFrontmatter(data.result.data);
+    return { mode: 'ready', markdown: data.result.data, title };
   }
 
   return {
