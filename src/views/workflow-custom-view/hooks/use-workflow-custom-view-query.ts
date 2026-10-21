@@ -1,10 +1,15 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
+import parseErrorMessageForQueryTypes from '@/route-handlers/fetch-workflow-query-types/helpers/parse-error-message-for-query-types';
 import { type QueryWorkflowResponse } from '@/route-handlers/query-workflow/query-workflow.types';
 import request from '@/utils/request';
 import { type RequestError } from '@/utils/request/request-error';
 
-import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '../workflow-custom-view.constants';
+import {
+  WORKFLOW_CUSTOM_VIEW_QUERY_MAX_RETRIES,
+  WORKFLOW_CUSTOM_VIEW_QUERY_NAME,
+  WORKFLOW_CUSTOM_VIEW_QUERY_RETRY_DELAY_MS,
+} from '../workflow-custom-view.constants';
 
 import {
   type UseWorkflowCustomViewQueryOptions,
@@ -28,7 +33,11 @@ export default function useWorkflowCustomViewQuery(
         { method: 'POST' }
       ).then((res) => res.json()),
     enabled,
-    retry: false,
+    // A missing query handler will not appear on retry, so only retry other errors
+    retry: (failureCount, error) =>
+      !parseErrorMessageForQueryTypes(error.message) &&
+      failureCount < WORKFLOW_CUSTOM_VIEW_QUERY_MAX_RETRIES,
+    retryDelay: WORKFLOW_CUSTOM_VIEW_QUERY_RETRY_DELAY_MS,
     refetchInterval,
   });
 }

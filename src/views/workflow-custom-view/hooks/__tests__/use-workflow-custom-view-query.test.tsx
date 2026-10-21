@@ -2,8 +2,16 @@ import { HttpResponse } from 'msw';
 
 import { renderHook, waitFor } from '@/test-utils/rtl';
 
-import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '../../workflow-custom-view.constants';
+import {
+  WORKFLOW_CUSTOM_VIEW_QUERY_MAX_RETRIES,
+  WORKFLOW_CUSTOM_VIEW_QUERY_NAME,
+} from '../../workflow-custom-view.constants';
 import useWorkflowCustomViewQuery from '../use-workflow-custom-view-query';
+
+jest.mock('../../workflow-custom-view.constants', () => ({
+  ...jest.requireActual('../../workflow-custom-view.constants'),
+  WORKFLOW_CUSTOM_VIEW_QUERY_RETRY_DELAY_MS: 0,
+}));
 
 const params = { domain: 'd', cluster: 'c', workflowId: 'w', runId: 'r' };
 
@@ -21,8 +29,17 @@ describe(useWorkflowCustomViewQuery.name, () => {
     expect(getCalls()).toBe(0);
   });
 
-  it('does not retry a failed query', async () => {
-    const { result, getCalls } = setup({ enabled: true, error: true });
+  it('retries a failed query', async () => {
+    const { result, getCalls } = setup({ enabled: true, error: 'other' });
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(getCalls()).toBe(WORKFLOW_CUSTOM_VIEW_QUERY_MAX_RETRIES + 1);
+  });
+
+  it('does not retry when the worker has no handler for the query', async () => {
+    const { result, getCalls } = setup({
+      enabled: true,
+      error: 'missing-handler',
+    });
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(getCalls()).toBe(1);
   });
@@ -40,7 +57,7 @@ function setup({
 }: {
   enabled: boolean;
   refetchInterval?: number;
-  error?: boolean;
+  error?: 'other' | 'missing-handler';
 }) {
   let calls = 0;
   const { result } = renderHook(
@@ -53,6 +70,15 @@ function setup({
           mockOnce: false,
           httpResolver: async () => {
             calls++;
+            if (error === 'missing-handler') {
+              return HttpResponse.json(
+                {
+                  message:
+                    'unknown queryType cadence_web_custom_view. KnownQueryTypes=[__stack_trace]',
+                },
+                { status: 500 }
+              );
+            }
             return error
               ? HttpResponse.json({ message: 'nope' }, { status: 500 })
               : HttpResponse.json({ result: { a: 1 }, rejected: null });

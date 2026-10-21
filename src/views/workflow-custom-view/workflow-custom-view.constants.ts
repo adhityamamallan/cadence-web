@@ -3,6 +3,10 @@ export const WORKFLOW_CUSTOM_VIEW_QUERY_NAME = 'cadence_web_custom_view';
 
 export const WORKFLOW_CUSTOM_VIEW_ACTION_REFETCH_DELAY_MS = 1000;
 
+export const WORKFLOW_CUSTOM_VIEW_QUERY_MAX_RETRIES = 3;
+
+export const WORKFLOW_CUSTOM_VIEW_QUERY_RETRY_DELAY_MS = 4000;
+
 export const WORKFLOW_CUSTOM_VIEW_MESSAGES = {
   disabled: 'Custom views are not enabled',
   archived: 'Custom views are not available for archived workflows',

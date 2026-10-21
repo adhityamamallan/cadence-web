@@ -9,6 +9,11 @@ import { mockDescribeWorkflowResponse } from '@/views/workflow-page/__fixtures__
 import WorkflowCustomView from '../workflow-custom-view';
 import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '../workflow-custom-view.constants';
 
+jest.mock('../workflow-custom-view.constants', () => ({
+  ...jest.requireActual('../workflow-custom-view.constants'),
+  WORKFLOW_CUSTOM_VIEW_QUERY_RETRY_DELAY_MS: 0,
+}));
+
 jest.mock('@/components/error-panel/error-panel', () =>
   jest.fn(({ message, description, actions }) => (
     <div>
@@ -87,8 +92,12 @@ describe(WorkflowCustomView.name, () => {
     const { user, getCustomViewQueryCalls } = await setup({
       queryError: true,
     });
-    await user.click(await screen.findByText('Retry'));
-    await waitFor(() => expect(getCustomViewQueryCalls()).toBe(2));
+    const retryButton = await screen.findByText('Retry');
+    const callsBeforeRetry = getCustomViewQueryCalls();
+    await user.click(retryButton);
+    await waitFor(() =>
+      expect(getCustomViewQueryCalls()).toBeGreaterThan(callsBeforeRetry)
+    );
   });
 
   it('renders the invalid format state when the result is not markdown', async () => {
