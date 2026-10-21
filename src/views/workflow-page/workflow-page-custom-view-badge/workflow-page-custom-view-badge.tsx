@@ -27,5 +27,5 @@ export default function WorkflowPageCustomViewBadge() {
 
   if (!customViewTitle) return null;
 
-  return <Badge content="custom" overrides={overrides.badge} />;
+  return <Badge content="Custom" overrides={overrides.badge} />;
 }

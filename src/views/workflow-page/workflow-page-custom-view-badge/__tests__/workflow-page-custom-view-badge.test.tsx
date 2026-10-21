@@ -23,14 +23,14 @@ describe(WorkflowPageCustomViewBadge.name, () => {
   it('renders the badge when the page has a title', async () => {
     setup({ markdown: '---\ntitle: Expense 1\n---\n# Hi' });
 
-    expect(await screen.findByText('custom')).toBeInTheDocument();
+    expect(await screen.findByText('Custom')).toBeInTheDocument();
   });
 
   it('renders nothing when the page has no title', async () => {
     const { getQueryCalls } = setup({ markdown: '# Hi' });
 
     await waitFor(() => expect(getQueryCalls()).toBe(1));
-    expect(screen.queryByText('custom')).toBeNull();
+    expect(screen.queryByText('Custom')).toBeNull();
   });
 
   it('renders nothing when the feature is disabled', async () => {
@@ -41,14 +41,14 @@ describe(WorkflowPageCustomViewBadge.name, () => {
 
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(getQueryCalls()).toBe(0);
-    expect(screen.queryByText('custom')).toBeNull();
+    expect(screen.queryByText('Custom')).toBeNull();
   });
 
   it('renders nothing when the query fails', async () => {
     const { getQueryCalls } = setup({});
 
     await waitFor(() => expect(getQueryCalls()).toBe(1));
-    expect(screen.queryByText('custom')).toBeNull();
+    expect(screen.queryByText('Custom')).toBeNull();
   });
 });
 
