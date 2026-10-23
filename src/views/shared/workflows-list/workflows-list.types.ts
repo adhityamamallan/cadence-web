@@ -62,4 +62,6 @@ export type Props = {
   isFetchingNextPage: boolean;
   sortParams?: SortParams;
   selection?: SelectionParams;
+  // Limits the list height; the header stays visible while rows scroll.
+  maxHeight?: string;
 };

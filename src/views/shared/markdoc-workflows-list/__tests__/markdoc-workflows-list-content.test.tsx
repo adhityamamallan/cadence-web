@@ -2,6 +2,8 @@ import { HttpResponse } from 'msw';
 
 import { render, screen } from '@/test-utils/rtl';
 
+import WorkflowsList from '@/views/shared/workflows-list/workflows-list';
+
 import MarkdocWorkflowsListContent from '../markdoc-workflows-list-content';
 
 jest.mock('@/components/error-panel/error-panel', () =>
@@ -21,6 +23,15 @@ describe(MarkdocWorkflowsListContent.name, () => {
   it('renders the list with the fetched workflows', async () => {
     setup({});
     expect(await screen.findByText('Mock list: 1')).toBeInTheDocument();
+  });
+
+  it('limits the list height', async () => {
+    setup({});
+    await screen.findByText('Mock list: 1');
+    expect(WorkflowsList).toHaveBeenCalledWith(
+      expect.objectContaining({ maxHeight: '10vh' }),
+      expect.anything()
+    );
   });
 
   it('renders an error panel when the request fails', async () => {

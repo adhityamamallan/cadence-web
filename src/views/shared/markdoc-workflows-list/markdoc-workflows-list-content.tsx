@@ -9,7 +9,7 @@ import useWorkflowsListColumns from '@/views/shared/workflows-list/hooks/use-wor
 import WorkflowsList from '@/views/shared/workflows-list/workflows-list';
 
 import getMarkdocWorkflowsListColumns from './helpers/get-markdoc-workflows-list-columns';
-import { styled } from './markdoc-workflows-list.styles';
+import { MARKDOC_WORKFLOWS_LIST_MAX_HEIGHT } from './markdoc-workflows-list.constants';
 import { type ContentProps } from './markdoc-workflows-list.types';
 
 export default function MarkdocWorkflowsListContent({
@@ -60,17 +60,16 @@ export default function MarkdocWorkflowsListContent({
   }
 
   return (
-    <styled.ScrollContainer>
-      <WorkflowsList
-        domain={domain}
-        cluster={cluster}
-        workflows={workflows}
-        columns={visibleColumns}
-        error={error}
-        hasNextPage={hasNextPage}
-        fetchNextPage={fetchNextPage}
-        isFetchingNextPage={isFetchingNextPage}
-      />
-    </styled.ScrollContainer>
+    <WorkflowsList
+      domain={domain}
+      cluster={cluster}
+      workflows={workflows}
+      columns={visibleColumns}
+      error={error}
+      hasNextPage={hasNextPage}
+      fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      maxHeight={MARKDOC_WORKFLOWS_LIST_MAX_HEIGHT}
+    />
   );
 }

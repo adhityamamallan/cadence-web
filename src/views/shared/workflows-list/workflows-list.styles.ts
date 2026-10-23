@@ -4,34 +4,50 @@ export const styled = {
   ScrollArea: createStyled('div', {
     position: 'relative',
   }),
-  Container: createStyled('div', ({ $theme }: { $theme: Theme }) => ({
-    overflowX: 'scroll',
-    scrollbarWidth: 'none',
-    '::-webkit-scrollbar': {
-      display: 'none',
-    },
-    backgroundImage: [
-      `linear-gradient(to right, ${$theme.colors.backgroundPrimary} 30%, ${$theme.colors.backgroundPrimary}00)`,
-      `linear-gradient(to left, ${$theme.colors.backgroundPrimary} 30%, ${$theme.colors.backgroundPrimary}00)`,
-      `linear-gradient(to right, ${$theme.colors.borderTransparent}, ${$theme.colors.borderSelected}00)`,
-      `linear-gradient(to left, ${$theme.colors.borderTransparent}, ${$theme.colors.borderSelected}00)`,
-    ].join(', '),
-    backgroundPosition: 'left center, right center, left center, right center',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: `${$theme.sizing.scale1000} 100%, ${$theme.sizing.scale1000} 100%, ${$theme.sizing.scale900} 100%, ${$theme.sizing.scale900} 100%`,
-    backgroundAttachment: 'local, local, scroll, scroll',
-  })),
-  GridHeader: createStyled<'div', { $gridTemplateColumns: string }>(
+  Container: createStyled<'div', { $maxHeight?: string }>(
     'div',
-    ({ $theme, $gridTemplateColumns }) => ({
-      display: 'grid',
-      gridTemplateColumns: $gridTemplateColumns,
-      minWidth: 'min-content',
-      borderBottomWidth: '1px',
-      borderBottomStyle: 'solid',
-      borderBottomColor: $theme.colors.borderTransparent,
+    ({ $theme, $maxHeight }) => ({
+      ...($maxHeight
+        ? { maxHeight: $maxHeight, overflowX: 'auto', overflowY: 'auto' }
+        : {
+            overflowX: 'scroll',
+            scrollbarWidth: 'none',
+            '::-webkit-scrollbar': {
+              display: 'none',
+            },
+          }),
+      backgroundImage: [
+        `linear-gradient(to right, ${$theme.colors.backgroundPrimary} 30%, ${$theme.colors.backgroundPrimary}00)`,
+        `linear-gradient(to left, ${$theme.colors.backgroundPrimary} 30%, ${$theme.colors.backgroundPrimary}00)`,
+        `linear-gradient(to right, ${$theme.colors.borderTransparent}, ${$theme.colors.borderSelected}00)`,
+        `linear-gradient(to left, ${$theme.colors.borderTransparent}, ${$theme.colors.borderSelected}00)`,
+      ].join(', '),
+      backgroundPosition:
+        'left center, right center, left center, right center',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: `${$theme.sizing.scale1000} 100%, ${$theme.sizing.scale1000} 100%, ${$theme.sizing.scale900} 100%, ${$theme.sizing.scale900} 100%`,
+      backgroundAttachment: 'local, local, scroll, scroll',
     })
   ),
+  GridHeader: createStyled<
+    'div',
+    { $gridTemplateColumns: string; $isSticky?: boolean }
+  >('div', ({ $theme, $gridTemplateColumns, $isSticky }) => ({
+    display: 'grid',
+    gridTemplateColumns: $gridTemplateColumns,
+    minWidth: 'min-content',
+    borderBottomWidth: '1px',
+    borderBottomStyle: 'solid',
+    borderBottomColor: $theme.colors.borderTransparent,
+    ...($isSticky
+      ? {
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          backgroundColor: $theme.colors.backgroundPrimary,
+        }
+      : {}),
+  })),
   HeaderCell: createStyled('div', ({ $theme }: { $theme: Theme }) => ({
     ...$theme.typography.LabelSmall,
     color: $theme.colors.contentSecondary,

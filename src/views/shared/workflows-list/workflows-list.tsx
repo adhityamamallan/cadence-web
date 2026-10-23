@@ -25,6 +25,7 @@ export default function WorkflowsList({
   isFetchingNextPage,
   sortParams,
   selection,
+  maxHeight,
 }: Props) {
   const gridTemplateColumns = useMemo(() => {
     const columnWidths = columns.map((col) => col.width);
@@ -38,11 +39,26 @@ export default function WorkflowsList({
 
   const hasWorkflows = workflows.length > 0;
 
+  const footer = (
+    <styled.FooterContainer>
+      <TableInfiniteScrollLoader
+        hasData={hasWorkflows}
+        error={error}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+      />
+    </styled.FooterContainer>
+  );
+
   return (
     <div>
       <styled.ScrollArea>
-        <styled.Container>
-          <styled.GridHeader $gridTemplateColumns={gridTemplateColumns}>
+        <styled.Container $maxHeight={maxHeight}>
+          <styled.GridHeader
+            $gridTemplateColumns={gridTemplateColumns}
+            $isSticky={Boolean(maxHeight)}
+          >
             {/* TODO: once baseui is upgraded to >=16.1, switch to checkbox-v2
                 (baseui/checkbox-v2) and use `isIndeterminate` here for the
                 some-but-not-all-selected state, and `containsInteractiveElement`
@@ -133,17 +149,10 @@ export default function WorkflowsList({
                 </styled.GridRow>
               );
             })}
+          {maxHeight && footer}
         </styled.Container>
       </styled.ScrollArea>
-      <styled.FooterContainer>
-        <TableInfiniteScrollLoader
-          hasData={hasWorkflows}
-          error={error}
-          fetchNextPage={fetchNextPage}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-        />
-      </styled.FooterContainer>
+      {!maxHeight && footer}
     </div>
   );
 }
