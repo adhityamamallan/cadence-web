@@ -26,7 +26,7 @@ describe(getWorkflowHomeContent.name, () => {
         homeQuery: {
           error: {
             message:
-              'unknown queryType cadence_web_home. KnownQueryTypes=[__stack_trace other]',
+              'unknown queryType home. KnownQueryTypes=[__stack_trace other]',
           } as RequestError,
         },
       })

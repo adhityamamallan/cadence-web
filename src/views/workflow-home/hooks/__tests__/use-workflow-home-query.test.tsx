@@ -74,7 +74,7 @@ function setup({
               return HttpResponse.json(
                 {
                   message:
-                    'unknown queryType cadence_web_home. KnownQueryTypes=[__stack_trace]',
+                    'unknown queryType home. KnownQueryTypes=[__stack_trace]',
                 },
                 { status: 500 }
               );
