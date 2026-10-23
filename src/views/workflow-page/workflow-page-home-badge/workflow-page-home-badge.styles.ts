@@ -1,4 +1,4 @@
-import type { Theme } from 'baseui';
+import { styled as createStyled, type Theme } from 'baseui';
 import type { BadgeOverrides } from 'baseui/badge';
 import type { StyleObject } from 'styletron-react';
 
@@ -14,4 +14,17 @@ export const overrides = {
       }),
     },
   } satisfies BadgeOverrides,
+};
+
+export const styled = {
+  Text: createStyled(
+    'span',
+    ({ $theme }: { $theme: Theme }): StyleObject => ({
+      display: 'block',
+      maxWidth: $theme.sizing.scale4800,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    })
+  ),
 };

@@ -1,17 +1,17 @@
 import useSuspenseConfigValue from '@/hooks/use-config-value/use-suspense-config-value';
 import { useDescribeWorkflow } from '@/views/workflow-page/hooks/use-describe-workflow';
 
-import getHomeTabTitle from '../helpers/get-home-tab-title';
+import getHomeBadge from '../helpers/get-home-badge';
 
+import { type UseWorkflowHomeBadgeParams } from './use-workflow-home-badge.types';
 import useWorkflowHomeQuery from './use-workflow-home-query';
-import { type UseWorkflowHomeTabTitleParams } from './use-workflow-home-tab-title.types';
 
-export default function useWorkflowHomeTabTitle({
+export default function useWorkflowHomeBadge({
   domain,
   cluster,
   workflowId,
   runId,
-}: UseWorkflowHomeTabTitleParams): string | undefined {
+}: UseWorkflowHomeBadgeParams): string | undefined {
   const { data: isWorkflowHomeEnabled } = useSuspenseConfigValue(
     'WORKFLOW_HOME_ENABLED'
   );
@@ -27,11 +27,11 @@ export default function useWorkflowHomeTabTitle({
   const isArchived =
     workflowDetails?.workflowExecutionInfo?.isArchived ?? false;
 
-  // The tab title comes from the frontmatter of the page, so the query runs on page load
+  // The badge comes from the frontmatter of the page, so the query runs on page load
   const { data: homeData } = useWorkflowHomeQuery(
     { domain, cluster, workflowId, runId },
     { enabled: isWorkflowHomeEnabled && !!workflowDetails && !isArchived }
   );
 
-  return getHomeTabTitle(homeData);
+  return getHomeBadge(homeData);
 }

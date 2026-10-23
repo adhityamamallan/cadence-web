@@ -7,17 +7,17 @@ import { renderHook, waitFor } from '@/test-utils/rtl';
 import { mockDescribeWorkflowResponse } from '@/views/workflow-page/__fixtures__/describe-workflow-response';
 
 import { WORKFLOW_HOME_QUERY_NAME } from '../../workflow-home.constants';
-import useWorkflowHomeTabTitle from '../use-workflow-home-tab-title';
+import useWorkflowHomeBadge from '../use-workflow-home-badge';
 
 const params = { domain: 'd', cluster: 'c', workflowId: 'w', runId: 'r' };
 
-describe(useWorkflowHomeTabTitle.name, () => {
-  it('returns the frontmatter title', async () => {
-    const { result } = setup({ markdown: '---\ntitle: Expense 1\n---\n# Hi' });
+describe(useWorkflowHomeBadge.name, () => {
+  it('returns the frontmatter badge', async () => {
+    const { result } = setup({ markdown: '---\nbadge: Expense 1\n---\n# Hi' });
     await waitFor(() => expect(result.current).toBe('Expense 1'));
   });
 
-  it('returns undefined without a title', async () => {
+  it('returns undefined without a badge', async () => {
     const { result, getQueryCalls } = setup({ markdown: '# Hi' });
     await waitFor(() => expect(getQueryCalls()).toBe(1));
     expect(result.current).toBeUndefined();
@@ -26,7 +26,7 @@ describe(useWorkflowHomeTabTitle.name, () => {
   it('does not run the query when the feature is disabled', async () => {
     const { result, getQueryCalls } = setup({
       enabled: false,
-      markdown: '---\ntitle: Expense 1\n---\n',
+      markdown: '---\nbadge: Expense 1\n---\n',
     });
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(getQueryCalls()).toBe(0);
@@ -36,7 +36,7 @@ describe(useWorkflowHomeTabTitle.name, () => {
   it('does not run the query for archived workflows', async () => {
     const { result, getQueryCalls } = setup({
       archived: true,
-      markdown: '---\ntitle: Expense 1\n---\n',
+      markdown: '---\nbadge: Expense 1\n---\n',
     });
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(getQueryCalls()).toBe(0);
@@ -61,7 +61,7 @@ function setup({
 }) {
   let queryCalls = 0;
   const { result } = renderHook(
-    () => useWorkflowHomeTabTitle(params),
+    () => useWorkflowHomeBadge(params),
     {
       endpointsMocks: [
         {

@@ -9,6 +9,7 @@ export type WorkflowHomeContent =
 
 export type HomeFrontmatter = {
   title?: string;
+  badge?: string;
 };
 
 export type MarkdownQueryResult = {

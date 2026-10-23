@@ -14,17 +14,18 @@ Markdoc is a markdown parser and renderer that is used to safely render the mark
 
 ## Page Frontmatter
 
-A home page can start with frontmatter to set a title.
-The title is the name of the Home tab.
+A home page can start with frontmatter to set a title and a tab badge.
 
 \`\`\`
 ---
-title: Expense EXP-1001
+title: Expense report EXP-1001
+badge: Pending review
 ---
 ## Details
 \`\`\`
 
-- \`title\` (string, optional) -- name of the Home tab, not part of the rendered content
+- \`title\` (string, optional) -- heading at the top of the home page
+- \`badge\` (string, optional) -- short text in a badge next to the Home tab name
 
 
 ## Signal Workflow

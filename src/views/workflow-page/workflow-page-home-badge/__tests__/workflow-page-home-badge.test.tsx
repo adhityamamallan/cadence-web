@@ -20,35 +20,35 @@ jest.mock('next/navigation', () => ({
 }));
 
 describe(WorkflowPageHomeBadge.name, () => {
-  it('renders the badge when the page has a title', async () => {
-    setup({ markdown: '---\ntitle: Expense 1\n---\n# Hi' });
+  it('renders the badge when the page has a badge', async () => {
+    setup({ markdown: '---\nbadge: Expense 1\n---\n# Hi' });
 
-    expect(await screen.findByText('Home')).toBeInTheDocument();
+    expect(await screen.findByText('Expense 1')).toBeInTheDocument();
   });
 
-  it('renders nothing when the page has no title', async () => {
+  it('renders nothing when the page has no badge', async () => {
     const { getQueryCalls } = setup({ markdown: '# Hi' });
 
     await waitFor(() => expect(getQueryCalls()).toBe(1));
-    expect(screen.queryByText('Home')).toBeNull();
+    expect(screen.queryByText('Expense 1')).toBeNull();
   });
 
   it('renders nothing when the feature is disabled', async () => {
     const { getQueryCalls } = setup({
       enabled: false,
-      markdown: '---\ntitle: Expense 1\n---\n# Hi',
+      markdown: '---\nbadge: Expense 1\n---\n# Hi',
     });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(getQueryCalls()).toBe(0);
-    expect(screen.queryByText('Home')).toBeNull();
+    expect(screen.queryByText('Expense 1')).toBeNull();
   });
 
   it('renders nothing when the query fails', async () => {
     const { getQueryCalls } = setup({});
 
     await waitFor(() => expect(getQueryCalls()).toBe(1));
-    expect(screen.queryByText('Home')).toBeNull();
+    expect(screen.queryByText('Expense 1')).toBeNull();
   });
 });
 

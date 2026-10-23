@@ -6,11 +6,11 @@ import { Badge } from 'baseui/badge';
 import { useParams } from 'next/navigation';
 
 import decodeUrlParams from '@/utils/decode-url-params';
-import useWorkflowHomeTabTitle from '@/views/workflow-home/hooks/use-workflow-home-tab-title';
+import useWorkflowHomeBadge from '@/views/workflow-home/hooks/use-workflow-home-badge';
 
 import { type WorkflowPageTabsParams } from '../workflow-page-tabs/workflow-page-tabs.types';
 
-import { overrides } from './workflow-page-home-badge.styles';
+import { overrides, styled } from './workflow-page-home-badge.styles';
 
 export default function WorkflowPageHomeBadge() {
   const params = useParams<WorkflowPageTabsParams>();
@@ -18,14 +18,19 @@ export default function WorkflowPageHomeBadge() {
     params
   ) as WorkflowPageTabsParams;
 
-  const homeTitle = useWorkflowHomeTabTitle({
+  const homeBadge = useWorkflowHomeBadge({
     domain,
     cluster,
     workflowId,
     runId,
   });
 
-  if (!homeTitle) return null;
+  if (!homeBadge) return null;
 
-  return <Badge content="Home" overrides={overrides.badge} />;
+  return (
+    <Badge
+      content={<styled.Text title={homeBadge}>{homeBadge}</styled.Text>}
+      overrides={overrides.badge}
+    />
+  );
 }

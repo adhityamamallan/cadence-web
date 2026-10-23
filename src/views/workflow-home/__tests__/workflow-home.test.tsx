@@ -75,6 +75,13 @@ describe(WorkflowHome.name, () => {
     expect(screen.getByText('Refresh')).toBeInTheDocument();
   });
 
+  it('renders the frontmatter title as a heading', async () => {
+    await setup({ markdown: '---\ntitle: Expense report 1\n---\n# Home' });
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Expense report 1' })
+    ).toBeInTheDocument();
+  });
+
   it('renders the empty state when the error lists the known query types', async () => {
     await setup({ notSetUp: true });
     expect(await screen.findByText('Mock Empty')).toBeInTheDocument();

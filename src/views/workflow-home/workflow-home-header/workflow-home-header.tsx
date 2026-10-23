@@ -7,9 +7,14 @@ import { MdRefresh } from 'react-icons/md';
 import { overrides, styled } from './workflow-home-header.styles';
 import { type Props } from './workflow-home-header.types';
 
-export default function WorkflowHomeHeader({ onRefresh, isRefreshing }: Props) {
+export default function WorkflowHomeHeader({
+  title,
+  onRefresh,
+  isRefreshing,
+}: Props) {
   return (
     <styled.Header>
+      {title ? <styled.Title>{title}</styled.Title> : <div />}
       <Button
         size="compact"
         kind="secondary"

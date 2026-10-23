@@ -125,6 +125,7 @@ export default function WorkflowHome({ params }: WorkflowPageTabContentProps) {
         <>
           <PageSection>
             <WorkflowHomeHeader
+              title={content.title}
               onRefresh={handleRefresh}
               isRefreshing={isManualRefresh}
             />

@@ -19,6 +19,20 @@ describe(getHomeFrontmatter.name, () => {
     ).toEqual({ title: 'A' });
   });
 
+  it('returns the badge from the frontmatter', () => {
+    expect(
+      getHomeFrontmatter(
+        '---\ntitle: Expense report 1\nbadge: Pending\n---\n# Hello'
+      )
+    ).toEqual({ title: 'Expense report 1', badge: 'Pending' });
+  });
+
+  it('keeps a valid badge when the title is invalid', () => {
+    expect(
+      getHomeFrontmatter('---\ntitle: 12\nbadge: Pending\n---\n# Hello')
+    ).toEqual({ badge: 'Pending' });
+  });
+
   it('returns an empty object when there is no frontmatter', () => {
     expect(getHomeFrontmatter('# Hello')).toEqual({});
   });

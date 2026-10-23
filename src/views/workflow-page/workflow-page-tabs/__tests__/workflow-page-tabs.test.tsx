@@ -2,13 +2,11 @@ import React, { Suspense } from 'react';
 
 import { HttpResponse } from 'msw';
 
-import { render, screen, act, fireEvent, waitFor } from '@/test-utils/rtl';
+import { render, screen, act, fireEvent } from '@/test-utils/rtl';
 
 import ErrorBoundary from '@/components/error-boundary/error-boundary';
 import { type GetConfigResponse } from '@/route-handlers/get-config/get-config.types';
-import { WORKFLOW_HOME_QUERY_NAME } from '@/views/workflow-home/workflow-home.constants';
 
-import { mockDescribeWorkflowResponse } from '../../__fixtures__/describe-workflow-response';
 import { mockWorkflowPageTabsConfig } from '../../__fixtures__/workflow-page-tabs-config';
 import WorkflowPageTabs from '../workflow-page-tabs';
 
@@ -104,57 +102,6 @@ describe('WorkflowPageTabs', () => {
     expect(screen.queryByTestId('home-artwork')).toBeNull();
   });
 
-  it('shows the title from the page frontmatter as the home page tab name', async () => {
-    await setup({
-      enableHome: true,
-      homeMarkdown: '---\ntitle: Expense 1\n---\n# Hi',
-    });
-
-    expect(await screen.findByText('Expense 1')).toBeInTheDocument();
-    expect(screen.queryByText('Home')).toBeNull();
-  });
-
-  it('keeps the default home page tab name without a frontmatter title', async () => {
-    const { getHomeQueryCalls } = await setup({
-      enableHome: true,
-      homeMarkdown: '# Hi',
-    });
-
-    await waitFor(() => expect(getHomeQueryCalls()).toBe(1));
-    expect(screen.getByText('Home')).toBeInTheDocument();
-  });
-
-  it('keeps the default home page tab name when the query fails', async () => {
-    const { getHomeQueryCalls } = await setup({
-      enableHome: true,
-    });
-
-    await waitFor(() => expect(getHomeQueryCalls()).toBe(1));
-    expect(screen.getByText('Home')).toBeInTheDocument();
-  });
-
-  it('does not run the home page query when the feature is disabled', async () => {
-    const { getHomeQueryCalls } = await setup({
-      enableHome: false,
-      homeMarkdown: '---\ntitle: Expense 1\n---\n# Hi',
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(getHomeQueryCalls()).toBe(0);
-  });
-
-  it('does not run the home page query for archived workflows', async () => {
-    const { getHomeQueryCalls } = await setup({
-      enableHome: true,
-      archived: true,
-      homeMarkdown: '# Hi',
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(getHomeQueryCalls()).toBe(0);
-    expect(screen.getByText('Home')).toBeInTheDocument();
-  });
-
   it('renders tabs buttons correctly', async () => {
     await setup({ enableDiagnostics: false });
 
@@ -223,17 +170,12 @@ async function setup({
   enableDiagnostics,
   enableDiagnosticsInHistory,
   enableHome,
-  homeMarkdown,
-  archived,
 }: {
   error?: boolean;
   enableDiagnostics?: boolean;
   enableDiagnosticsInHistory?: boolean;
   enableHome?: boolean;
-  homeMarkdown?: string;
-  archived?: boolean;
 }) {
-  let homeQueryCalls = 0;
   render(
     <ErrorBoundary
       fallbackRender={({ error }) => <div>Error: {error.message}</div>}
@@ -244,37 +186,6 @@ async function setup({
     </ErrorBoundary>,
     {
       endpointsMocks: [
-        {
-          path: '/api/domains/:domain/:cluster/workflows/:workflowId/:runId',
-          httpMethod: 'GET',
-          mockOnce: false,
-          jsonResponse: {
-            ...mockDescribeWorkflowResponse,
-            workflowExecutionInfo: {
-              ...mockDescribeWorkflowResponse.workflowExecutionInfo,
-              isArchived: archived ?? false,
-            },
-          },
-        },
-        {
-          path: `/api/domains/:domain/:cluster/workflows/:workflowId/:runId/query/${WORKFLOW_HOME_QUERY_NAME}`,
-          httpMethod: 'POST',
-          mockOnce: false,
-          httpResolver: async () => {
-            homeQueryCalls++;
-            if (homeMarkdown === undefined) {
-              return HttpResponse.json({ message: 'nope' }, { status: 500 });
-            }
-            return HttpResponse.json({
-              result: {
-                cadenceResponseType: 'formattedData',
-                format: 'text/markdown',
-                data: homeMarkdown,
-              },
-              rejected: null,
-            });
-          },
-        },
         {
           path: '/api/config',
           httpMethod: 'GET',
@@ -319,6 +230,4 @@ async function setup({
     // Wait for the first tab to load
     await screen.findByText('Summary');
   }
-
-  return { getHomeQueryCalls: () => homeQueryCalls };
 }

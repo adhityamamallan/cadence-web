@@ -11,6 +11,18 @@ describe(WorkflowHomeHeader.name, () => {
     expect(screen.getByText('Refresh')).toBeInTheDocument();
   });
 
+  it('renders the title as a heading', () => {
+    setup({ title: 'Expense report 1' });
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Expense report 1' })
+    ).toBeInTheDocument();
+  });
+
+  it('renders no heading without a title', () => {
+    setup({});
+    expect(screen.queryByRole('heading')).toBeNull();
+  });
+
   it('calls onRefresh when Refresh is clicked', async () => {
     const { user, onRefresh } = setup({});
     await user.click(screen.getByText('Refresh'));

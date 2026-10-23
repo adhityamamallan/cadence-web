@@ -1,4 +1,5 @@
 import { parse as parseMarkdoc } from '@markdoc/markdoc';
+import omitBy from 'lodash/omitBy';
 import { parse as parseYaml } from 'yaml';
 
 import homeFrontmatterSchema from '../schemas/home-frontmatter-schema';
@@ -11,9 +12,10 @@ export default function getHomeFrontmatter(markdown: string): HomeFrontmatter {
     if (typeof rawFrontmatter !== 'string') return {};
 
     const result = homeFrontmatterSchema.safeParse(parseYaml(rawFrontmatter));
-    if (!result.success || !result.data.title) return {};
+    if (!result.success) return {};
 
-    return { title: result.data.title };
+    const { title, badge } = result.data;
+    return omitBy({ title, badge }, (value) => value === undefined);
   } catch {
     return {};
   }
