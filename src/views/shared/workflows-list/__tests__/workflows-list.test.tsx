@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, screen, userEvent } from '@/test-utils/rtl';
+import { fireEvent, render, screen, userEvent } from '@/test-utils/rtl';
 
 import { type Props as LoaderProps } from '@/components/table/table-infinite-scroll-loader/table-infinite-scroll-loader.types';
 import { getMockWorkflowListItem } from '@/route-handlers/list-workflows/__fixtures__/mock-workflow-list-items';
@@ -60,6 +60,17 @@ describe(WorkflowsList.name, () => {
     expect(screen.getByText('Workflow ID')).toBeInTheDocument();
     expect(screen.getByText('wf-1')).toBeInTheDocument();
     expect(screen.getByTestId('mock-loader')).toBeInTheDocument();
+  });
+
+  it('keeps the header when the list scrolls with maxHeight set', () => {
+    setup({ maxHeight: '10vh' });
+
+    const scrollContainer = screen.getByText('wf-1').closest('a')
+      ?.parentElement as HTMLElement;
+    scrollContainer.scrollTop = 50;
+    fireEvent.scroll(scrollContainer);
+
+    expect(screen.getByText('Workflow ID')).toBeInTheDocument();
   });
 
   it('does not render workflow rows when workflows array is empty', () => {

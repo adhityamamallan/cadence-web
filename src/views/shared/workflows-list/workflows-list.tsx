@@ -1,4 +1,4 @@
-import { useMemo, type MouseEvent } from 'react';
+import { useMemo, useState, type MouseEvent, type UIEvent } from 'react';
 
 import { Checkbox } from 'baseui/checkbox';
 import ChevronDown from 'baseui/icon/chevron-down';
@@ -39,6 +39,8 @@ export default function WorkflowsList({
 
   const hasWorkflows = workflows.length > 0;
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
   const footer = (
     <styled.FooterContainer>
       <TableInfiniteScrollLoader
@@ -54,10 +56,19 @@ export default function WorkflowsList({
   return (
     <div>
       <styled.ScrollArea>
-        <styled.Container $maxHeight={maxHeight}>
+        <styled.Container
+          $maxHeight={maxHeight}
+          onScroll={
+            maxHeight
+              ? (event: UIEvent<HTMLDivElement>) =>
+                  setIsScrolled(event.currentTarget.scrollTop > 0)
+              : undefined
+          }
+        >
           <styled.GridHeader
             $gridTemplateColumns={gridTemplateColumns}
             $isSticky={Boolean(maxHeight)}
+            $isScrolled={isScrolled}
           >
             {/* TODO: once baseui is upgraded to >=16.1, switch to checkbox-v2
                 (baseui/checkbox-v2) and use `isIndeterminate` here for the
