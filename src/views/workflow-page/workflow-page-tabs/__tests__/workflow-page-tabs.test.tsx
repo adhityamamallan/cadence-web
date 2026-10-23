@@ -6,7 +6,7 @@ import { render, screen, act, fireEvent, waitFor } from '@/test-utils/rtl';
 
 import ErrorBoundary from '@/components/error-boundary/error-boundary';
 import { type GetConfigResponse } from '@/route-handlers/get-config/get-config.types';
-import { WORKFLOW_CUSTOM_VIEW_QUERY_NAME } from '@/views/workflow-custom-view/workflow-custom-view.constants';
+import { WORKFLOW_HOME_QUERY_NAME } from '@/views/workflow-home/workflow-home.constants';
 
 import { mockDescribeWorkflowResponse } from '../../__fixtures__/describe-workflow-response';
 import { mockWorkflowPageTabsConfig } from '../../__fixtures__/workflow-page-tabs-config';
@@ -88,71 +88,71 @@ describe('WorkflowPageTabs', () => {
     expect(screen.queryByText('Diagnostics')).toBeNull();
   });
 
-  it('renders the custom view tab when the feature is enabled', async () => {
-    await setup({ enableCustomView: true });
+  it('renders the home page tab when the feature is enabled', async () => {
+    await setup({ enableHome: true });
 
     expect(screen.getByText('Summary')).toBeInTheDocument();
-    expect(screen.getByText('Custom view')).toBeInTheDocument();
-    expect(screen.getByTestId('custom-view-artwork')).toBeInTheDocument();
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByTestId('home-artwork')).toBeInTheDocument();
   });
 
-  it('hides the custom view tab when the feature is disabled', async () => {
-    await setup({ enableCustomView: false });
+  it('hides the home page tab when the feature is disabled', async () => {
+    await setup({ enableHome: false });
 
     expect(screen.getByText('Summary')).toBeInTheDocument();
-    expect(screen.queryByText('Custom view')).toBeNull();
-    expect(screen.queryByTestId('custom-view-artwork')).toBeNull();
+    expect(screen.queryByText('Home')).toBeNull();
+    expect(screen.queryByTestId('home-artwork')).toBeNull();
   });
 
-  it('shows the title from the page frontmatter as the custom view tab name', async () => {
+  it('shows the title from the page frontmatter as the home page tab name', async () => {
     await setup({
-      enableCustomView: true,
-      customViewMarkdown: '---\ntitle: Expense 1\n---\n# Hi',
+      enableHome: true,
+      homeMarkdown: '---\ntitle: Expense 1\n---\n# Hi',
     });
 
     expect(await screen.findByText('Expense 1')).toBeInTheDocument();
-    expect(screen.queryByText('Custom view')).toBeNull();
+    expect(screen.queryByText('Home')).toBeNull();
   });
 
-  it('keeps the default custom view tab name without a frontmatter title', async () => {
-    const { getCustomViewQueryCalls } = await setup({
-      enableCustomView: true,
-      customViewMarkdown: '# Hi',
+  it('keeps the default home page tab name without a frontmatter title', async () => {
+    const { getHomeQueryCalls } = await setup({
+      enableHome: true,
+      homeMarkdown: '# Hi',
     });
 
-    await waitFor(() => expect(getCustomViewQueryCalls()).toBe(1));
-    expect(screen.getByText('Custom view')).toBeInTheDocument();
+    await waitFor(() => expect(getHomeQueryCalls()).toBe(1));
+    expect(screen.getByText('Home')).toBeInTheDocument();
   });
 
-  it('keeps the default custom view tab name when the query fails', async () => {
-    const { getCustomViewQueryCalls } = await setup({
-      enableCustomView: true,
+  it('keeps the default home page tab name when the query fails', async () => {
+    const { getHomeQueryCalls } = await setup({
+      enableHome: true,
     });
 
-    await waitFor(() => expect(getCustomViewQueryCalls()).toBe(1));
-    expect(screen.getByText('Custom view')).toBeInTheDocument();
+    await waitFor(() => expect(getHomeQueryCalls()).toBe(1));
+    expect(screen.getByText('Home')).toBeInTheDocument();
   });
 
-  it('does not run the custom view query when the feature is disabled', async () => {
-    const { getCustomViewQueryCalls } = await setup({
-      enableCustomView: false,
-      customViewMarkdown: '---\ntitle: Expense 1\n---\n# Hi',
+  it('does not run the home page query when the feature is disabled', async () => {
+    const { getHomeQueryCalls } = await setup({
+      enableHome: false,
+      homeMarkdown: '---\ntitle: Expense 1\n---\n# Hi',
     });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(getCustomViewQueryCalls()).toBe(0);
+    expect(getHomeQueryCalls()).toBe(0);
   });
 
-  it('does not run the custom view query for archived workflows', async () => {
-    const { getCustomViewQueryCalls } = await setup({
-      enableCustomView: true,
+  it('does not run the home page query for archived workflows', async () => {
+    const { getHomeQueryCalls } = await setup({
+      enableHome: true,
       archived: true,
-      customViewMarkdown: '# Hi',
+      homeMarkdown: '# Hi',
     });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(getCustomViewQueryCalls()).toBe(0);
-    expect(screen.getByText('Custom view')).toBeInTheDocument();
+    expect(getHomeQueryCalls()).toBe(0);
+    expect(screen.getByText('Home')).toBeInTheDocument();
   });
 
   it('renders tabs buttons correctly', async () => {
@@ -222,18 +222,18 @@ async function setup({
   error,
   enableDiagnostics,
   enableDiagnosticsInHistory,
-  enableCustomView,
-  customViewMarkdown,
+  enableHome,
+  homeMarkdown,
   archived,
 }: {
   error?: boolean;
   enableDiagnostics?: boolean;
   enableDiagnosticsInHistory?: boolean;
-  enableCustomView?: boolean;
-  customViewMarkdown?: string;
+  enableHome?: boolean;
+  homeMarkdown?: string;
   archived?: boolean;
 }) {
-  let customViewQueryCalls = 0;
+  let homeQueryCalls = 0;
   render(
     <ErrorBoundary
       fallbackRender={({ error }) => <div>Error: {error.message}</div>}
@@ -257,19 +257,19 @@ async function setup({
           },
         },
         {
-          path: `/api/domains/:domain/:cluster/workflows/:workflowId/:runId/query/${WORKFLOW_CUSTOM_VIEW_QUERY_NAME}`,
+          path: `/api/domains/:domain/:cluster/workflows/:workflowId/:runId/query/${WORKFLOW_HOME_QUERY_NAME}`,
           httpMethod: 'POST',
           mockOnce: false,
           httpResolver: async () => {
-            customViewQueryCalls++;
-            if (customViewMarkdown === undefined) {
+            homeQueryCalls++;
+            if (homeMarkdown === undefined) {
               return HttpResponse.json({ message: 'nope' }, { status: 500 });
             }
             return HttpResponse.json({
               result: {
                 cadenceResponseType: 'formattedData',
                 format: 'text/markdown',
-                data: customViewMarkdown,
+                data: homeMarkdown,
               },
               rejected: null,
             });
@@ -301,10 +301,10 @@ async function setup({
                   (enableDiagnosticsInHistory ??
                     false) satisfies GetConfigResponse<'WORKFLOW_DIAGNOSTICS_IN_HISTORY_ENABLED'>
                 );
-              case 'WORKFLOW_CUSTOM_VIEW_ENABLED':
+              case 'WORKFLOW_HOME_ENABLED':
                 return HttpResponse.json(
-                  (enableCustomView ??
-                    false) satisfies GetConfigResponse<'WORKFLOW_CUSTOM_VIEW_ENABLED'>
+                  (enableHome ??
+                    false) satisfies GetConfigResponse<'WORKFLOW_HOME_ENABLED'>
                 );
               default:
                 return HttpResponse.json(false);
@@ -320,5 +320,5 @@ async function setup({
     await screen.findByText('Summary');
   }
 
-  return { getCustomViewQueryCalls: () => customViewQueryCalls };
+  return { getHomeQueryCalls: () => homeQueryCalls };
 }

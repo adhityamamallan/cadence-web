@@ -113,14 +113,14 @@ describe(StartWorkflowButton.name, () => {
 
   it('sends the memo in the request body', async () => {
     const { user, getLatestBody } = setup({
-      propsOverrides: { memo: { cadence_web_custom_view: true } },
+      propsOverrides: { memo: { cadence_web_home: true } },
     });
 
     await user.click(screen.getByRole('button', { name: 'Start Workflow' }));
 
     await waitFor(() =>
       expect(getLatestBody()).toEqual(
-        expect.objectContaining({ memo: { cadence_web_custom_view: true } })
+        expect.objectContaining({ memo: { cadence_web_home: true } })
       )
     );
   });

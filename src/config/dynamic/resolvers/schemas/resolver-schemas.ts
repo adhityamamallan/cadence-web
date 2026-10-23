@@ -102,11 +102,11 @@ const resolverSchemas: ResolverSchemas = {
     args: z.undefined(),
     returnType: z.boolean(),
   },
-  WORKFLOW_CUSTOM_VIEW_ENABLED: {
+  WORKFLOW_HOME_ENABLED: {
     args: z.undefined(),
     returnType: z.boolean(),
   },
-  WORKFLOW_CUSTOM_VIEW_REFRESH_INTERVAL_MS: {
+  WORKFLOW_HOME_REFRESH_INTERVAL_MS: {
     args: z.undefined(),
     returnType: z.number(),
   },

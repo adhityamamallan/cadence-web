@@ -14,8 +14,8 @@ Markdoc is a markdown parser and renderer that is used to safely render the mark
 
 ## Page Frontmatter
 
-A custom view page can start with frontmatter to set a title.
-The title is the name of the Custom view tab.
+A home page can start with frontmatter to set a title.
+The title is the name of the Home tab.
 
 \`\`\`
 ---
@@ -24,7 +24,7 @@ title: Expense EXP-1001
 ## Details
 \`\`\`
 
-- \`title\` (string, optional) -- name of the Custom view tab, not part of the rendered content
+- \`title\` (string, optional) -- name of the Home tab, not part of the rendered content
 
 
 ## Signal Workflow
@@ -135,7 +135,7 @@ When rendered on a workflow page, \`domain\` and \`cluster\` are inherited from 
 - \`cluster\` (string, optional) -- inherited from page context if omitted
 - \`wfId\` (string, optional) -- custom workflow ID
 - \`input\` (object, optional) -- workflow input payload
-- \`memo\` (object, optional) -- workflow memo, for example \`memo={"cadence_web_custom_view":true}\`
+- \`memo\` (object, optional) -- workflow memo, for example \`memo={"cadence_web_home":true}\`
 - \`timeoutSeconds\` (number, optional, default: 60) -- execution timeout
 - \`sdkLanguage\` (string, optional, default: "GO") -- worker SDK language
 

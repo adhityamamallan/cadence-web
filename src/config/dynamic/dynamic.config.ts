@@ -41,10 +41,10 @@ import {
   type WorkflowActionsEnabledResolverParams,
   type WorkflowActionsEnabledConfig,
 } from './resolvers/workflow-actions-enabled.types';
-import workflowCustomViewEnabled from './resolvers/workflow-custom-view-enabled';
-import workflowCustomViewRefreshIntervalMs from './resolvers/workflow-custom-view-refresh-interval-ms';
 import workflowDiagnosticsEnabled from './resolvers/workflow-diagnostics-enabled';
 import workflowDiagnosticsInHistoryEnabled from './resolvers/workflow-diagnostics-in-history-enabled';
+import workflowHomeEnabled from './resolvers/workflow-home-enabled';
+import workflowHomeRefreshIntervalMs from './resolvers/workflow-home-refresh-interval-ms';
 import workflowsListEnabled from './resolvers/workflows-list-enabled';
 
 const dynamicConfigs: {
@@ -102,13 +102,13 @@ const dynamicConfigs: {
     'request',
     true
   >;
-  WORKFLOW_CUSTOM_VIEW_ENABLED: ConfigAsyncResolverDefinition<
+  WORKFLOW_HOME_ENABLED: ConfigAsyncResolverDefinition<
     undefined,
     boolean,
     'request',
     true
   >;
-  WORKFLOW_CUSTOM_VIEW_REFRESH_INTERVAL_MS: ConfigAsyncResolverDefinition<
+  WORKFLOW_HOME_REFRESH_INTERVAL_MS: ConfigAsyncResolverDefinition<
     undefined,
     number,
     'request',
@@ -214,13 +214,13 @@ const dynamicConfigs: {
     evaluateOn: 'request',
     isPublic: true,
   },
-  WORKFLOW_CUSTOM_VIEW_ENABLED: {
-    resolver: workflowCustomViewEnabled,
+  WORKFLOW_HOME_ENABLED: {
+    resolver: workflowHomeEnabled,
     evaluateOn: 'request',
     isPublic: true,
   },
-  WORKFLOW_CUSTOM_VIEW_REFRESH_INTERVAL_MS: {
-    resolver: workflowCustomViewRefreshIntervalMs,
+  WORKFLOW_HOME_REFRESH_INTERVAL_MS: {
+    resolver: workflowHomeRefreshIntervalMs,
     evaluateOn: 'request',
     isPublic: true,
   },

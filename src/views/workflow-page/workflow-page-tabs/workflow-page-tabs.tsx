@@ -9,7 +9,7 @@ import PageTabs from '@/components/page-tabs/page-tabs';
 import useSuspenseConfigValue from '@/hooks/use-config-value/use-suspense-config-value';
 import decodeUrlParams from '@/utils/decode-url-params';
 import WorkflowActions from '@/views/workflow-actions/workflow-actions';
-import useWorkflowCustomViewTabTitle from '@/views/workflow-custom-view/hooks/use-workflow-custom-view-tab-title';
+import useWorkflowHomeTabTitle from '@/views/workflow-home/hooks/use-workflow-home-tab-title';
 
 import workflowPageTabsConfig from '../config/workflow-page-tabs.config';
 import WorkflowPageCliCommandsButton from '../workflow-page-cli-commands-button/workflow-page-cli-commands-button';
@@ -29,11 +29,11 @@ export default function WorkflowPageTabs() {
   const { data: isWorkflowDiagnosticsInHistoryEnabled } =
     useSuspenseConfigValue('WORKFLOW_DIAGNOSTICS_IN_HISTORY_ENABLED');
 
-  const { data: isWorkflowCustomViewEnabled } = useSuspenseConfigValue(
-    'WORKFLOW_CUSTOM_VIEW_ENABLED'
+  const { data: isWorkflowHomeEnabled } = useSuspenseConfigValue(
+    'WORKFLOW_HOME_ENABLED'
   );
 
-  const customViewTitle = useWorkflowCustomViewTabTitle({
+  const homeTitle = useWorkflowHomeTabTitle({
     domain: decodedParams.domain,
     cluster: decodedParams.cluster,
     workflowId: decodedParams.workflowId,
@@ -47,23 +47,20 @@ export default function WorkflowPageTabs() {
     () =>
       omit(workflowPageTabsConfig, [
         ...(shouldShowDiagnosticsInSeparateTab ? [] : ['diagnostics' as const]),
-        ...(isWorkflowCustomViewEnabled ? [] : ['custom-view' as const]),
+        ...(isWorkflowHomeEnabled ? [] : ['home' as const]),
       ]),
-    [shouldShowDiagnosticsInSeparateTab, isWorkflowCustomViewEnabled]
+    [shouldShowDiagnosticsInSeparateTab, isWorkflowHomeEnabled]
   );
 
   const tabList = useMemo(
     () =>
       Object.entries(filteredTabsConfig).map(([key, tabConfig]) => ({
         key,
-        title:
-          key === 'custom-view' && customViewTitle
-            ? customViewTitle
-            : tabConfig.title,
+        title: key === 'home' && homeTitle ? homeTitle : tabConfig.title,
         artwork: tabConfig.artwork,
         endEnhancer: tabConfig.endEnhancer,
       })),
-    [filteredTabsConfig, customViewTitle]
+    [filteredTabsConfig, homeTitle]
   );
 
   return (
