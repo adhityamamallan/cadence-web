@@ -19,13 +19,13 @@ A home page can start with frontmatter to set a title and a tab badge.
 \`\`\`
 ---
 title: Expense report EXP-1001
-badge: Pending review
+badge: Expense report
 ---
 ## Details
 \`\`\`
 
 - \`title\` (string, optional) -- heading at the top of the home page
-- \`badge\` (string, optional) -- short text in a badge next to the Home tab name
+- \`badge\` (string, optional) -- short, descriptive name of the page, shown in a badge next to the Home tab name
 
 
 ## Signal Workflow
